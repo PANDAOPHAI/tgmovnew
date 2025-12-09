@@ -1,5 +1,6 @@
 const movieList     = document.getElementById("movie-list");
 const popularList   = document.getElementById("popular-list");
+const animeList     = document.getElementById("anime-list");
 const topRatedList  = document.getElementById("top-rated-list");
 const searchInput   = document.getElementById("searchInput");
 const searchResults = document.getElementById("search-results");
@@ -157,4 +158,5 @@ if (topRatedList && typeof MOVIES !== "undefined") {
       topRatedList.appendChild(card);
     });
 }
+
 
