@@ -39,6 +39,21 @@ const MOVIES = [
     rating: 8.4,
     category: "popular"
   },
+	{
+    id: " Reze Arc (2025)",
+    title: "Chainsaw Man : Reze Arc(2025)",
+    year: "2025",
+    quality: "HD",
+    genre: "Horror, Anime",
+
+    poster: "https://a.storyblok.com/f/178900/2897x4096/2f095fe0aa/chainsaw-man-movie-jp-visual.jpeg/m/filters:quality(95)format(webp)",
+    banner: "https://static0.srcdn.com/wordpress/wp-content/uploads/2025/03/copy-of-untitled-design-2-1.jpg?w=1600&h=900&fit=crop",
+
+    stream: "https://cdn4504.ensta392zij.com/stream2/i-cdn-0/682f59ff9bab2f048e9a888de5a50de0/MJTMsp1RshGTygnMNRUR2N2MSlnWXZEdMNDZzQWe5MDZzMmdZJTO1R2RWVHZDljekhkSsl1VwYnWtx2cihVT2lFVjlXTqFVNNR1Y5pFVjFTWt5EbPdVU3pVbNlXWyo0aORUVxklaWhmWqlVP:1765288743:23.109.232.13:6dc2693c22070d3e4c61aa41a9e945d9d96276101c3e4258662d8a4c7b278482/1080/index.m3u8",
+
+    rating: 8.5,
+    category: "Anime"
+  },
 
  {
   id: "squid-game",
@@ -663,6 +678,7 @@ const MOVIES = [
 
 
 ];
+
 
 
 
