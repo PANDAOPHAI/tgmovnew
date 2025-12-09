@@ -9,10 +9,10 @@
 <body>
 
   <!-- Background Video -->
-  <video autoplay muted loop id="bg-video">
-    <source src="theboys.webm" type="video/webm">
-    Your browser does not support HTML5 video.
-  </video>
+<video autoplay muted loop playsinline webkit-playsinline id="bg-video">
+  <source src="theboys.webm" type="video/webm">
+  Your browser does not support HTML5 video.
+</video>
 
   <div class="overlay"></div>
 
@@ -96,5 +96,18 @@
   <script src="movies-data.js"></script>
   <script src="movies-list.js"></script>
 
+  <script>
+  // Mobile browsers ke liye force play try karenge
+  const bgVideo = document.getElementById('bg-video');
+  if (bgVideo) {
+    bgVideo.play().catch(() => {
+      // Kuch browsers autoplay block karte hain, is case me kuch nahi kar sakte
+      console.log('Autoplay blocked by browser');
+    });
+  }
+</script>
+
+
 </body>
 </html>
+
