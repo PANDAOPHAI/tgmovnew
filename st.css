@@ -393,53 +393,52 @@ a {
   background-repeat: no-repeat;
   background-position: center;
 
-  /* Red color + strong glow ONLY on icon shape */
+  /* Red color + glow only on icon shape */
   filter:
     brightness(0) saturate(100%)
     invert(29%) sepia(95%) saturate(7473%)
     hue-rotate(357deg) brightness(97%) contrast(122%)
-    drop-shadow(0 0 3px  rgba(255, 50, 50, 0.5))
-    drop-shadow(0 0 7px  rgba(255, 50, 50, 0.6));
+    drop-shadow(0 0 5px rgba(255, 50, 50, 0.8))
+    drop-shadow(0 0 12px rgba(255, 50, 50, 0.9));
 
   animation: searchIconGlow 2.3s ease-in-out infinite;
 
-  display: none; /* desktop pe hidden, mobile me media query se show */
+  display: none; /* desktop pe hidden, mobile me show */
 }
 
 .search-icon-btn:active {
   transform: scale(0.95);
 }
 
-/* GLOW PULSE – SIRF ICON KE AROUND */
+/* GLOW PULSE – sirf icon ke around */
 @keyframes searchIconGlow {
   0% {
     filter:
       brightness(0) saturate(100%)
       invert(29%) sepia(95%) saturate(7473%)
       hue-rotate(357deg) brightness(97%) contrast(122%)
-      drop-shadow(0 0 3px  rgba(255, 50, 50, 0.5))
-      drop-shadow(0 0 7px  rgba(255, 50, 50, 0.6));
+      drop-shadow(0 0 3px rgba(255, 50, 50, 0.6))
+      drop-shadow(0 0 7px rgba(255, 50, 50, 0.7));
   }
   50% {
     filter:
       brightness(0) saturate(100%)
       invert(29%) sepia(95%) saturate(7473%)
       hue-rotate(357deg) brightness(97%) contrast(122%)
-      drop-shadow(0 0 8px  rgba(255, 50, 50, 1))
-      drop-shadow(0 0 20px rgba(255, 50, 50, 1))
-      drop-shadow(0 0 35px rgba(255, 50, 50, 0.95));
+      drop-shadow(0 0 10px rgba(255, 50, 50, 1))
+      drop-shadow(0 0 24px rgba(255, 50, 50, 1));
   }
   100% {
     filter:
       brightness(0) saturate(100%)
       invert(29%) sepia(95%) saturate(7473%)
       hue-rotate(357deg) brightness(97%) contrast(122%)
-      drop-shadow(0 0 3px  rgba(255, 50, 50, 0.5))
-      drop-shadow(0 0 7px  rgba(255, 50, 50, 0.6));
+      drop-shadow(0 0 3px rgba(255, 50, 50, 0.6))
+      drop-shadow(0 0 7px rgba(255, 50, 50, 0.7));
   }
 }
 
-/* RED GLOW INPUT – desktop me visible */
+/* RED GLOW INPUT – desktop default visible */
 .header-search input {
   height: 38px !important;
   width: 220px !important;
@@ -588,84 +587,58 @@ body {
 }
 
 /* ============================
-   📱 MOBILE SEARCH ICON → BAR MORPH
+   📱 MOBILE: ICON → EXPANDING BAR
    ============================ */
 @media (max-width: 768px) {
 
-  /* Logo thoda bada rakhenge */
+  /* logo thoda bada mobile pe */
   .logo {
     font-size: 1.4rem;
     font-weight: 700;
     letter-spacing: 0.4px;
   }
 
-  /* 🔁 Container jo morph hoga */
+  /* Icon visible, input collapsed */
+  .search-icon-btn {
+    display: inline-block !important;
+  }
+
   .header-search {
     position: relative;
-    height: 34px !important;
-    width: 34px !important;             /* start = chhota circle */
-    padding: 0 !important;
-    background: transparent !important; /* ❌ yahi container glow hata diya */
-    border-radius: 999px !important;
-    overflow: hidden !important;
-    justify-content: center;
-    box-shadow: none !important;
-    transition:
-      width 0.35s ease,
-      padding 0.35s ease,
-      background 0.35s ease;
   }
 
-  /* 🔍 Icon = poora circle occupy kare */
-  .header-search .search-icon-btn {
-    display: block !important;
-    width: 100% !important;
-    height: 100% !important;
-    margin-right: 0 !important;
-  }
-
-  /* Input hidden inside, lekin apna glow style preserve */
+  /* Start: input invisible, width 0 → morph feel */
   .header-search input {
-    position: absolute;
-    right: 12px;
+    max-width: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
     opacity: 0;
-    width: 0 !important;
     pointer-events: none;
-    transform: translateX(10px);
-    /* NOTE: yahan border/background/box-shadow ko touch nahi kar rahe */
+    overflow: hidden;
+    border-width: 0;         /* line hide */
+    box-shadow: none;        /* glow hide */
     transition:
+      max-width 0.3s ease,
       opacity 0.25s ease,
-      width 0.25s ease,
-      transform 0.25s ease;
+      padding 0.25s ease,
+      border-width 0.25s ease,
+      box-shadow 0.25s ease;
   }
 
-  /* ✅ ACTIVE: icon se bar ban jaye */
-  .header-search.active {
-    width: 220px !important;            /* circle → long pill */
-    padding: 0 12px 0 38px !important;  /* left space = icon ke liye */
-    background: transparent !important; /* glow sirf input ke box-shadow se aayega */
-    box-shadow: none !important;
-  }
-
-  /* Icon ko left me fix karo, chhota sa */
-  .header-search.active .search-icon-btn {
-    position: absolute;
-    left: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 22px !important;
-    height: 22px !important;
-  }
-
-  /* Ab input smoothly reveal ho – apna redGlowPulse use karega */
+  /* ACTIVE: icon ke right se bar expand ho */
   .header-search.active input {
+    max-width: 190px !important;
+    padding: 6px 14px !important;
     opacity: 1;
-    width: 100% !important;
     pointer-events: auto;
-    transform: translateX(0);
+    border-width: 1px;  /* desktop style wapas */
+    box-shadow:
+      0 0 4px rgba(255, 60, 60, 0.2),
+      0 0 10px rgba(255, 60, 60, 0.25),
+      0 0 18px rgba(255, 60, 60, 0.15);
   }
 
-  /* 🔽 Dropdown chhota, hero text kam cover kare */
+  /* Dropdown chhota, text ko kam cover kare */
   .search-results {
     right: 0;
     top: 115%;
@@ -679,9 +652,11 @@ body {
   .logo {
     font-size: 1.25rem;
   }
-  .header-search.active {
-    width: 190px !important;
+
+  .header-search.active input {
+    max-width: 170px !important;
   }
+
   .search-results {
     width: 230px;
   }
