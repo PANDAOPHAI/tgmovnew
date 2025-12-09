@@ -379,15 +379,20 @@ a {
   position: relative;  /* dropdown/input ko anchor karne ke liye */
 }
 
-/* 🔍 Search icon button (desktop pe hidden) */
+/* 🔍 Icon button – default: PC me HIDDEN */
 .search-icon-btn {
   border: none;
   background: transparent;
-  font-size: 1.2rem;
-  cursor: pointer;
-  color: #fff;
-  display: none; /* mobile pe dikhayenge */
+  padding: 0;
   margin-right: 8px;
+  cursor: pointer;
+  display: none;    /* PC / laptop pe hidden */
+}
+
+.search-icon-btn img {
+  width: 22px;
+  height: 22px;
+  display: block;
 }
 
 /* ================================
