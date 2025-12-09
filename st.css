@@ -642,6 +642,113 @@ body {
     width: 230px;
   }
 }
+/* ============================
+   📱 MOBILE SEARCH ICON → BAR MORPH
+   ============================ */
+@media (max-width: 768px) {
+
+  /* Logo thoda bada rakhenge */
+  .logo {
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+  }
+
+  /* 🔁 Container jo morph hoga */
+  .header-search {
+    position: relative;
+    height: 34px !important;
+    width: 34px !important;             /* start = chhota circle */
+    padding: 0 !important;
+    background: transparent !important;
+    border-radius: 999px !important;
+    overflow: hidden !important;
+    justify-content: center;
+    transition:
+      width 0.35s ease,
+      padding 0.35s ease,
+      background 0.35s ease,
+      box-shadow 0.35s ease;
+  }
+
+  /* 🔍 Icon = poora circle occupy kare */
+  .header-search .search-icon-btn {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    margin-right: 0 !important;
+  }
+
+  /* Input hidden inside (no width, no opacity) */
+  .header-search input {
+    position: absolute;
+    right: 12px;
+    opacity: 0;
+    width: 0 !important;
+    font-size: 0.8rem !important;
+    pointer-events: none;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    transform: translateX(10px);
+    transition:
+      opacity 0.25s ease,
+      width 0.25s ease,
+      transform 0.25s ease;
+  }
+
+  /* ✅ ACTIVE: icon se bar ban jaye */
+  .header-search.active {
+    width: 220px !important;            /* circle → long pill */
+    padding: 0 12px 0 38px !important;  /* left space = icon ke liye */
+    background: rgba(0, 0, 0, 0.88) !important;
+    box-shadow:
+      0 0 6px rgba(255, 42, 42, 0.6),
+      0 0 16px rgba(255, 42, 42, 0.7),
+      0 0 30px rgba(255, 42, 42, 0.45);
+  }
+
+  /* Icon ko left me fix karo, chhota sa */
+  .header-search.active .search-icon-btn {
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 22px !important;
+    height: 22px !important;
+  }
+
+  /* Ab input smoothly reveal ho */
+  .header-search.active input {
+    opacity: 1;
+    width: 100% !important;
+    pointer-events: auto;
+    transform: translateX(0);
+  }
+
+  /* 🔽 Dropdown chhota, hero text kam cover kare */
+  .search-results {
+    right: 0;
+    top: 115%;
+    width: 260px;
+    max-height: 230px;
+  }
+}
+
+/* EXTRA SMALL PHONES */
+@media (max-width: 480px) {
+  .logo {
+    font-size: 1.25rem;
+  }
+  .header-search.active {
+    width: 190px !important;
+  }
+  .search-results {
+    width: 230px;
+  }
+}
+
 
 
 
