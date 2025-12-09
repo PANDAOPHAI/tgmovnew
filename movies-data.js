@@ -11,7 +11,7 @@ const MOVIES = [
     poster: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdbXLtpf0dZyDCeZOKmbygEaiAKEcXManfow&s",
     banner: "https://wallpapercave.com/dwp2x/wp12837782.jpg",
 
-    stream: "https://p.10014.workers.dev/hailmist36.pro/file2/+VkvnkKo4nC+pxYjlWodg4j3M2Shy+LONcK07Y~PjmcA6dKUlqxy4o8JdkLt3vcLH9Py3RWpBKKQbskiznW5BNs~q499dYIY4arpo9+l6RfUMLplFkSUF+Z5omJGaT60o7xSgC8NdRAoWF2PtZzOwbszoSBv7yng4J+u8r+UZn0=/MTA4MA==/aW5kZXgubTN1OA==.m3u8",
+    stream: "https://cdn30091.ensta392zij.com/stream2/i-arch-400/e7fa9bd8ea5e8df9401f75ea48b11455/MJTMsp1RshGTygnMNRUR2N2MSlnWXZEdMNDZzQWe5MDZzMmdZJTO1R2RWVHZDljekhkSsl1VwYnWtx2cihVT21EVNdnTU10MNp2awkVbJJTWU10MZp3azkFVFJjTU10MPdVS14UbWlmWqFUP:1765288878:103.101.90.195:ae3557d92595335eb6b86fd225a85cc4540b1896552969f4e02b9824bf4d7576/360/index.m3u8",
 
     rating: 8.8,
     category: "popular"
@@ -663,5 +663,6 @@ const MOVIES = [
 
 
 ];
+
 
 
