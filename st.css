@@ -358,11 +358,10 @@ a {
   .movie-info p {
     font-size: 0.7rem;
   }
-
 }
 
 /* ================================
-   ✅ HEADER SEARCH – FINAL DESIGN
+   ✅ HEADER SEARCH – DESKTOP BASE
    ================================ */
 
 .header-right {
@@ -371,18 +370,17 @@ a {
   gap: 14px;
 }
 
-/* Search container */
 .header-search {
   margin-bottom: 0 !important;
   display: flex;
   align-items: center;
-  position: relative;  /* dropdown/input ko anchor karne ke liye */
+  position: relative;
 }
 
-/* 🔍 Icon button – desktop pe hidden, image as background */
+/* 🔍 Icon button – desktop: hidden */
 .search-icon-btn {
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   border: none;
   padding: 0;
   margin-right: 8px;
@@ -392,13 +390,11 @@ a {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  display: none;    /* PC / laptop pe hidden */
+  border-radius: 50%;
+  display: none; /* desktop me hidden */
 }
 
-/* ================================
-   🔴 ANIMATED RED GLOW SEARCH BAR
-   ================================ */
-
+/* RED GLOW INPUT – desktop me visible */
 .header-search input {
   height: 38px !important;
   width: 220px !important;
@@ -411,34 +407,19 @@ a {
   outline: none !important;
   backdrop-filter: blur(8px) !important;
   -webkit-backdrop-filter: blur(8px) !important;
-
-  /* 🔥 Normal animated red glow */
   box-shadow:
     0 0 4px rgba(255, 60, 60, 0.2),
     0 0 10px rgba(255, 60, 60, 0.25),
     0 0 18px rgba(255, 60, 60, 0.15);
-
   animation: redGlowPulse 3s ease-in-out infinite;
   transition: all 0.25s ease !important;
 }
 
-/* Placeholder */
 .header-search input::placeholder {
   color: #ffb0b0 !important;
 }
 
-/* 🔴 Focus = strong glow */
-.header-search input:focus {
-  border-color: #ff2a2a !important;
-  box-shadow:
-    0 0 6px rgba(255, 42, 42, 0.6),
-    0 0 16px rgba(255, 42, 42, 0.7),
-    0 0 30px rgba(255, 42, 42, 0.45) !important;
-
-  animation: redGlowStrong 1.8s ease-in-out infinite;
-}
-
-/* 🔥 Normal slow pulse */
+/* Glow keyframes */
 @keyframes redGlowPulse {
   0% {
     box-shadow:
@@ -460,31 +441,9 @@ a {
   }
 }
 
-/* 🔥 Fast glow on focus */
-@keyframes redGlowStrong {
-  0% {
-    box-shadow:
-      0 0 10px rgba(255, 42, 42, 0.6),
-      0 0 22px rgba(255, 42, 42, 0.7),
-      0 0 40px rgba(255, 42, 42, 0.4);
-  }
-  50% {
-    box-shadow:
-      0 0 18px rgba(255, 42, 42, 0.9),
-      0 0 36px rgba(255, 42, 42, 0.9),
-      0 0 60px rgba(255, 42, 42, 0.6);
-  }
-  100% {
-    box-shadow:
-      0 0 10px rgba(255, 42, 42, 0.6),
-      0 0 22px rgba(255, 42, 42, 0.7),
-      0 0 40px rgba(255, 42, 42, 0.4);
-  }
-}
-
-/* dropdown box */
+/* DROPDOWN BOX */
 .search-results {
-  position: absolute;          /* ✅ ab input ke niche chipkega */
+  position: absolute;
   top: 115%;
   right: 0;
   width: 340px;
@@ -546,7 +505,6 @@ a {
    WATCH & DOWNLOAD BUTTON FIX
    =============================== */
 
-/* WATCH BUTTON */
 button.watch {
   background: linear-gradient(135deg, #00ffcc, #00b3ff) !important;
   color: #000 !important;
@@ -556,7 +514,6 @@ button.watch {
   border-radius: 8px !important;
 }
 
-/* DOWNLOAD BUTTON */
 button.download {
   background: linear-gradient(135deg, #ff3c3c, #ff7a00) !important;
   color: #fff !important;
@@ -568,72 +525,77 @@ button.download {
 
 /* ✅ GLOBAL SCROLLBAR HIDE (BUT SCROLL WORKING) */
 * {
-  scrollbar-width: none;          /* Firefox */
-  -ms-overflow-style: none;       /* IE / Edge */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 *::-webkit-scrollbar {
-  display: none;                  /* Chrome, Safari */
+  display: none;
 }
 
-/* ✅ HORIZONTAL SLIDER BAR HIDE (Popular / Top Rated) */
 .movie-slider {
   overflow-x: auto;
   overflow-y: hidden;
 }
 
-/* ✅ PAGE RIGHT SIDE VERTICAL BAR HIDE */
 body {
   overflow-y: auto;
 }
 
-/* ✅ Mobile: logo + search behaviour */
+/* ============================
+   ✅ MOBILE: logo + search behaviour
+   ============================ */
 @media (max-width: 768px) {
 
-  /* TG Mov logo chhota */
+  /* logo thoda bada */
   .logo {
-    font-size: 1.1rem;
-    font-weight: 600;
-    letter-spacing: 0.3px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
   }
 
-  /* Mobile pe search icon dikhe */
+  /* icon dikhe, input hide */
   .search-icon-btn {
-    display: block !important;
+    display: inline-block !important;
   }
 
-  /* Mobile default: input hidden */
   .header-search input {
     display: none !important;
-    width: 150px !important;
-    font-size: 0.75rem !important;
+    width: 190px !important;
+    font-size: 0.8rem !important;
   }
 
-  /* Jab JS se .active lagta hai, input niche popup jaisa aaye */
+  /* ACTIVE: icon → bar me transform */
+  .header-search.active .search-icon-btn {
+    display: none !important;
+  }
+
   .header-search.active input {
     display: block !important;
-    position: absolute;
-    top: 115%;
-    right: 0;
-    min-width: 210px;
-    background: rgba(0, 0, 0, 0.9) !important;
-    border-radius: 999px;
+    position: static;            /* header ke andar hi rahe */
+    width: 190px !important;
+    min-width: 0;
   }
 
-  /* Dropdown bhi input ke niche chipka hua */
-  .header-search.active #search-results {
-    position: absolute;
-    top: 115%;
-    right: 0;
+  /* dropdown chhota & right side me */
+  .search-results {
     width: 260px;
-    max-height: 260px;
-    margin: 0;
+    max-height: 230px;
+    right: 0;
   }
 }
 
-/* ✅ EXTRA SMALL PHONES ke liye aur bhi chhota logo */
+/* EXTRA SMALL PHONES */
 @media (max-width: 480px) {
   .logo {
-    font-size: 0.95rem;
+    font-size: 1.25rem;
+  }
+
+  .header-search.active input {
+    width: 170px !important;
+  }
+
+  .search-results {
+    width: 230px;
   }
 }
