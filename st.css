@@ -386,17 +386,51 @@ a {
   cursor: pointer;
   background: transparent;
 
-  /* ✅ REAL TRANSPARENT RED MAGNIFYING GLASS */
+  /* ✅ TRANSPARENT MAGNIFYING GLASS */
   background-image: url("https://cdn-icons-png.flaticon.com/512/622/622669.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
 
-  /* ✅ Red color banane ke liye */
-  filter: brightness(0) saturate(100%) invert(29%) sepia(95%) saturate(7473%) hue-rotate(357deg) brightness(97%) contrast(122%);
+  /* ✅ RED ICON COLOR */
+  filter: brightness(0) saturate(100%)
+          invert(29%) sepia(95%) saturate(7473%)
+          hue-rotate(357deg) brightness(97%) contrast(122%);
+
+  /* ✅ RED GLOW EFFECT */
+  box-shadow:
+    0 0 4px rgba(255, 50, 50, 0.6),
+    0 0 10px rgba(255, 50, 50, 0.7),
+    0 0 18px rgba(255, 50, 50, 0.6);
+
+  animation: searchIconGlow 2.5s ease-in-out infinite;
+  border-radius: 50%;
 
   display: none; /* desktop pe hidden */
 }
+
+/* ✅ PULSE GLOW ANIMATION */
+@keyframes searchIconGlow {
+  0% {
+    box-shadow:
+      0 0 4px rgba(255, 50, 50, 0.4),
+      0 0 10px rgba(255, 50, 50, 0.5),
+      0 0 18px rgba(255, 50, 50, 0.4);
+  }
+  50% {
+    box-shadow:
+      0 0 10px rgba(255, 50, 50, 1),
+      0 0 24px rgba(255, 50, 50, 1),
+      0 0 40px rgba(255, 50, 50, 0.9);
+  }
+  100% {
+    box-shadow:
+      0 0 4px rgba(255, 50, 50, 0.4),
+      0 0 10px rgba(255, 50, 50, 0.5),
+      0 0 18px rgba(255, 50, 50, 0.4);
+  }
+}
+
 
 
 .search-icon-btn:active {
@@ -609,5 +643,6 @@ body {
     width: 230px;
   }
 }
+
 
 
