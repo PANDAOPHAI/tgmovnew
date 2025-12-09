@@ -591,6 +591,23 @@ body {
    ============================ */
 @media (max-width: 768px) {
 
+   /* ✅ Jab search active ho, icon hide kar do */
+  .header-search.active .search-icon-btn {
+    display: none !important;
+  }
+
+  /* ACTIVE: icon ke right se bar expand ho */
+  .header-search.active input {
+    max-width: 190px !important;
+    padding: 6px 14px !important;
+    opacity: 1;
+    pointer-events: auto;
+    border-width: 1px;
+    box-shadow:
+      0 0 4px rgba(255, 60, 60, 0.2),
+      0 0 10px rgba(255, 60, 60, 0.25),
+      0 0 18px rgba(255, 60, 60, 0.15);
+  }
   /* logo thoda bada mobile pe */
   .logo {
     font-size: 1.4rem;
@@ -661,3 +678,4 @@ body {
     width: 230px;
   }
 }
+
