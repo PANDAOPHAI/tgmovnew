@@ -9,10 +9,10 @@
 <body>
 
   <!-- Background Video -->
-<video autoplay muted loop playsinline webkit-playsinline id="bg-video">
-  <source src="theboys.webm" type="video/webm">
-  Your browser does not support HTML5 video.
-</video>
+  <video autoplay muted loop playsinline webkit-playsinline id="bg-video">
+    <source src="theboys.webm" type="video/webm">
+    Your browser does not support HTML5 video.
+  </video>
 
   <div class="overlay"></div>
 
@@ -27,30 +27,28 @@
       <a href="#">Kids</a>
     </nav>
 
-   <!-- ✅ Right Side Controls -->
-<div class="header-right">
-  <!-- SEARCH BAR + RESULTS DROPDOWN -->
-  <div class="search-row header-search">
-    <!-- 🔍 Icon (sirf mobile pe dikhana hai) -->
-    <button class="search-icon-btn" id="searchToggle" aria-label="Search"></button>
+    <!-- ✅ Right Side Controls -->
+    <div class="header-right">
+      <!-- SEARCH BAR + RESULTS DROPDOWN -->
+      <div class="search-row header-search">
+        <!-- 🔍 Icon (sirf mobile pe dikhana hai) -->
+        <button class="search-icon-btn" id="searchToggle" aria-label="Search"></button>
 
-    <!-- Actual input -->
-    <input
-      type="text"
-      id="searchInput"
-      placeholder="Search movies..."
-      autocomplete="off"
-    />
-    <div id="search-results" class="search-results"></div>
-  </div>
+        <!-- Actual input -->
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search movies..."
+          autocomplete="off"
+        />
+        <div id="search-results" class="search-results"></div>
+      </div>
 
-  <!-- PROFILE -->
-  <div class="profile">
-    <img src="https://i.pinimg.com/736x/56/37/12/563712bd3ce48f91d73f7bcef452c400.jpg" alt="User">
-  </div>
-</div>
-
-
+      <!-- PROFILE -->
+      <div class="profile">
+        <img src="https://i.pinimg.com/736x/56/37/12/563712bd3ce48f91d73f7bcef452c400.jpg" alt="User">
+      </div>
+    </div>
   </header>
 
   <!-- MAIN CONTENT -->
@@ -59,20 +57,29 @@
     <!-- HERO -->
     <div class="hero">
       <h1>The Boys</h1>
-      <p>It's the powerless against the super powerful as The Boys embark on a heroic quest to expose the truth about “The Seven,” and their formidable Vought backing.</p>
+      <p>
+        It's the powerless against the super powerful as The Boys embark on a heroic
+        quest to expose the truth about “The Seven,” and their formidable Vought backing.
+      </p>
       <div class="tags">
         <span class="tag">Action</span>
         <span class="tag">2022</span>
         <span class="tag">IMDB 9.3⭐</span>
       </div>
       <div class="buttons">
-        <a href="series.html?id=theboys"><button class="watch">▶ Watch</button></a>
-        <button class="download" onclick="document.getElementById('errorBox').style.display='block'">⬇ Download</button>
+        <a href="series.html?id=theboys">
+          <button class="watch">▶ Watch</button>
+        </a>
+        <button class="download"
+          onclick="document.getElementById('errorBox').style.display='block'">
+          ⬇ Download
+        </button>
       </div>
 
-      <div id="errorBox" style="display:none;background:#ff4d4d;color:#fff;padding:15px;margin-top:15px;border-radius:8px;position:relative;">
+      <div id="errorBox"
+        style="display:none;background:#ff4d4d;color:#fff;padding:15px;margin-top:15px;border-radius:8px;position:relative;">
         <span style="position:absolute;top:5px;right:5px;cursor:pointer;font-weight:bold;"
-        onclick="document.getElementById('errorBox').style.display='none'">❌</span>
+          onclick="document.getElementById('errorBox').style.display='none'">❌</span>
         Download not available right now.
       </div>
     </div>
@@ -97,49 +104,46 @@
 
   </main>
 
-  <!-- JS -->
+  <!-- JS FILES -->
   <script src="movies-data.js"></script>
   <script src="movies-list.js"></script>
 
+  <!-- ✅ Search toggle + BG video autoplay (UNIQUE variable names) -->
   <script>
-  // Mobile browsers ke liye force play try karenge
-  const bgVideo = document.getElementById('bg-video');
-  if (bgVideo) {
-    bgVideo.play().catch(() => {
-      // Kuch browsers autoplay block karte hain, is case me kuch nahi kar sakte
-      console.log('Autoplay blocked by browser');
-    });
-  }
-</script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // mobile search toggle
+      const tgMovSearchToggleBtn = document.getElementById('searchToggle');
+      const tgMovHeaderSearchBox = document.querySelector('.header-search');
+      const tgMovSearchInput     = document.getElementById('searchInput');
 
-<script>
-  const searchToggleBtn = document.getElementById('searchToggle');
-  const headerSearchBox = document.querySelector('.header-search');
-  const searchInput = document.getElementById('searchInput');
+      if (tgMovSearchToggleBtn && tgMovHeaderSearchBox && tgMovSearchInput) {
+        tgMovSearchToggleBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          tgMovHeaderSearchBox.classList.toggle('active');
+          if (tgMovHeaderSearchBox.classList.contains('active')) {
+            setTimeout(function () {
+              tgMovSearchInput.focus();
+            }, 50);
+          }
+        });
 
-  if (searchToggleBtn && headerSearchBox && searchInput) {
-    searchToggleBtn.addEventListener('click', (e) => {
-      e.preventDefault(); // image / button ka default action rokdo
-      headerSearchBox.classList.toggle('active');
-      if (headerSearchBox.classList.contains('active')) {
-        setTimeout(() => searchInput.focus(), 50);
+        // bahar click kare to band
+        document.addEventListener('click', function (e) {
+          if (!tgMovHeaderSearchBox.contains(e.target)) {
+            tgMovHeaderSearchBox.classList.remove('active');
+          }
+        });
+      }
+
+      // background video autoplay helper (mobile ke liye)
+      const bgVideo = document.getElementById('bg-video');
+      if (bgVideo) {
+        bgVideo.play().catch(function () {
+          console.log('Autoplay blocked by browser');
+        });
       }
     });
-
-    document.addEventListener('click', (e) => {
-      if (!headerSearchBox.contains(e.target)) {
-        headerSearchBox.classList.remove('active');
-      }
-    });
-  }
-</script>
-
+  </script>
 
 </body>
 </html>
-
-
-
-
-
-
