@@ -387,27 +387,30 @@ a {
   cursor: pointer;
   background: transparent;
 
-  /* ✅ Transparent magnifying glass icon */
+  /* Transparent magnifying glass icon */
   background-image: url("https://cdn-icons-png.flaticon.com/512/622/622669.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
 
-  /* ✅ Red color + strong glow ONLY on icon shape */
+  /* Red color + strong glow ONLY on icon shape */
   filter:
     brightness(0) saturate(100%)
     invert(29%) sepia(95%) saturate(7473%)
     hue-rotate(357deg) brightness(97%) contrast(122%)
-    drop-shadow(0 0 4px  rgba(255, 50, 50, 0.7))
-    drop-shadow(0 0 10px rgba(255, 50, 50, 0.9))
-    drop-shadow(0 0 20px rgba(255, 50, 50, 0.9));
+    drop-shadow(0 0 3px  rgba(255, 50, 50, 0.5))
+    drop-shadow(0 0 7px  rgba(255, 50, 50, 0.6));
 
   animation: searchIconGlow 2.3s ease-in-out infinite;
 
   display: none; /* desktop pe hidden, mobile me media query se show */
 }
 
-/* ✅ GLOW PULSE – SIRF ICON KE AROUND */
+.search-icon-btn:active {
+  transform: scale(0.95);
+}
+
+/* GLOW PULSE – SIRF ICON KE AROUND */
 @keyframes searchIconGlow {
   0% {
     filter:
@@ -436,13 +439,6 @@ a {
   }
 }
 
-
-
-.search-icon-btn:active {
-  transform: scale(0.95);
-}
-
-
 /* RED GLOW INPUT – desktop me visible */
 .header-search input {
   height: 38px !important;
@@ -468,7 +464,7 @@ a {
   color: #ffb0b0 !important;
 }
 
-/* Glow keyframes */
+/* Glow keyframes for bar */
 @keyframes redGlowPulse {
   0% {
     box-shadow:
@@ -592,63 +588,6 @@ body {
 }
 
 /* ============================
-   ✅ MOBILE: logo + search behaviour
-   ============================ */
-@media (max-width: 768px) {
-
-  /* logo thoda bada */
-  .logo {
-    font-size: 1.4rem;
-    font-weight: 700;
-    letter-spacing: 0.4px;
-  }
-
-  /* icon dikhe, input hide */
-  .search-icon-btn {
-    display: inline-block !important;
-  }
-
-  .header-search input {
-    display: none !important;
-    width: 190px !important;
-    font-size: 0.8rem !important;
-  }
-
-  /* ACTIVE: icon → bar me transform */
-  .header-search.active .search-icon-btn {
-    display: none !important;
-  }
-
-  .header-search.active input {
-    display: block !important;
-    position: static;            /* header ke andar hi rahe */
-    width: 190px !important;
-    min-width: 0;
-  }
-
-  /* dropdown chhota & right side me */
-  .search-results {
-    width: 260px;
-    max-height: 230px;
-    right: 0;
-  }
-}
-
-/* EXTRA SMALL PHONES */
-@media (max-width: 480px) {
-  .logo {
-    font-size: 1.25rem;
-  }
-
-  .header-search.active input {
-    width: 170px !important;
-  }
-
-  .search-results {
-    width: 230px;
-  }
-}
-/* ============================
    📱 MOBILE SEARCH ICON → BAR MORPH
    ============================ */
 @media (max-width: 768px) {
@@ -754,9 +693,3 @@ body {
     width: 230px;
   }
 }
-
-
-
-
-
-
