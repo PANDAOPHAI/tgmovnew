@@ -582,6 +582,27 @@ button.download {
 body {
   overflow-y: auto;
 }
+/* ✅ TG Mov title ko mobile me chhota aur responsive banana */
+@media (max-width: 768px) {
+
+  .logo {
+    font-size: 1.1rem;   /* pehle se chhota */
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+
+}
+
+/* ✅ EXTRA SMALL PHONES ke liye aur bhi chhota */
+@media (max-width: 480px) {
+
+  .logo {
+    font-size: 0.95rem;  /* bahut chhota phones ke liye */
+  }
+
+}
+
+
 
 
 
