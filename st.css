@@ -377,7 +377,6 @@ a {
   position: relative;
 }
 
-/* 🔍 Icon button – desktop: hidden */
 .search-icon-btn {
   width: 26px;
   height: 26px;
@@ -387,17 +386,18 @@ a {
   cursor: pointer;
   background: transparent;
 
-  /* ✅ TRANSPARENT ICON */
+  /* ✅ REAL TRANSPARENT RED MAGNIFYING GLASS */
   background-image: url("https://cdn-icons-png.flaticon.com/512/622/622669.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
 
-  filter: invert(1);   /* white bana dega dark bg pe */
-  opacity: 0.9;
+  /* ✅ Red color banane ke liye */
+  filter: brightness(0) saturate(100%) invert(29%) sepia(95%) saturate(7473%) hue-rotate(357deg) brightness(97%) contrast(122%);
 
-  display: none; /* desktop me hidden */
+  display: none; /* desktop pe hidden */
 }
+
 
 .search-icon-btn:active {
   transform: scale(0.95);
@@ -609,4 +609,5 @@ body {
     width: 230px;
   }
 }
+
 
