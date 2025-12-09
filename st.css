@@ -325,6 +325,7 @@ a {
 
 /* RESPONSIVE MAIN LAYOUT */
 @media screen and (max-width: 768px) {
+
   .hero h1 {
     font-size: 2.2rem;
   }
@@ -609,10 +610,15 @@ body {
       0 0 18px rgba(255, 60, 60, 0.15);
   }
   /* logo thoda bada mobile pe */
-  .logo {
+ .logo {
     font-size: 1.4rem;
     font-weight: 700;
     letter-spacing: 0.4px;
+  }
+
+  /* ✅ Glow ka size bhi logo ke equal */
+  .logo::after {
+    font-size: 1.4rem;
   }
 
   /* Icon visible, input collapsed */
@@ -670,6 +676,11 @@ body {
     font-size: 1.25rem;
   }
 
+  /* ✅ chhote phones pe glow bhi chhota */
+  .logo::after {
+    font-size: 1.25rem;
+  }
+
   .header-search.active input {
     max-width: 170px !important;
   }
@@ -678,4 +689,5 @@ body {
     width: 230px;
   }
 }
+
 
