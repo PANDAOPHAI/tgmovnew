@@ -377,6 +377,7 @@ a {
   position: relative;
 }
 
+/* 🔍 RED GLOW SEARCH ICON (TRANSPARENT) */
 .search-icon-btn {
   width: 26px;
   height: 26px;
@@ -386,50 +387,55 @@ a {
   cursor: pointer;
   background: transparent;
 
-  /* ✅ TRANSPARENT MAGNIFYING GLASS */
+  /* ✅ Transparent magnifying glass icon */
   background-image: url("https://cdn-icons-png.flaticon.com/512/622/622669.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
 
-  /* ✅ PURE RED COLOR */
-  filter: brightness(0) saturate(100%)
-          invert(29%) sepia(95%) saturate(7473%)
-          hue-rotate(357deg) brightness(97%) contrast(122%)
-          drop-shadow(0 0 4px rgba(255, 50, 50, 0.6))
-          drop-shadow(0 0 10px rgba(255, 50, 50, 0.8))
-          drop-shadow(0 0 18px rgba(255, 50, 50, 0.7));
+  /* ✅ Red color + strong glow ONLY on icon shape */
+  filter:
+    brightness(0) saturate(100%)
+    invert(29%) sepia(95%) saturate(7473%)
+    hue-rotate(357deg) brightness(97%) contrast(122%)
+    drop-shadow(0 0 4px  rgba(255, 50, 50, 0.7))
+    drop-shadow(0 0 10px rgba(255, 50, 50, 0.9))
+    drop-shadow(0 0 20px rgba(255, 50, 50, 0.9));
 
-  animation: searchIconGlow 2.5s ease-in-out infinite;
+  animation: searchIconGlow 2.3s ease-in-out infinite;
 
-  display: none; /* desktop pe hidden */
+  display: none; /* desktop pe hidden, mobile me media query se show */
 }
 
 /* ✅ GLOW PULSE – SIRF ICON KE AROUND */
 @keyframes searchIconGlow {
   0% {
-    filter: brightness(0) saturate(100%)
-            invert(29%) sepia(95%) saturate(7473%)
-            hue-rotate(357deg) brightness(97%) contrast(122%)
-            drop-shadow(0 0 4px rgba(255, 50, 50, 0.5))
-            drop-shadow(0 0 8px rgba(255, 50, 50, 0.6));
+    filter:
+      brightness(0) saturate(100%)
+      invert(29%) sepia(95%) saturate(7473%)
+      hue-rotate(357deg) brightness(97%) contrast(122%)
+      drop-shadow(0 0 3px  rgba(255, 50, 50, 0.5))
+      drop-shadow(0 0 7px  rgba(255, 50, 50, 0.6));
   }
   50% {
-    filter: brightness(0) saturate(100%)
-            invert(29%) sepia(95%) saturate(7473%)
-            hue-rotate(357deg) brightness(97%) contrast(122%)
-            drop-shadow(0 0 10px rgba(255, 50, 50, 1))
-            drop-shadow(0 0 22px rgba(255, 50, 50, 1))
-            drop-shadow(0 0 40px rgba(255, 50, 50, 0.9));
+    filter:
+      brightness(0) saturate(100%)
+      invert(29%) sepia(95%) saturate(7473%)
+      hue-rotate(357deg) brightness(97%) contrast(122%)
+      drop-shadow(0 0 8px  rgba(255, 50, 50, 1))
+      drop-shadow(0 0 20px rgba(255, 50, 50, 1))
+      drop-shadow(0 0 35px rgba(255, 50, 50, 0.95));
   }
   100% {
-    filter: brightness(0) saturate(100%)
-            invert(29%) sepia(95%) saturate(7473%)
-            hue-rotate(357deg) brightness(97%) contrast(122%)
-            drop-shadow(0 0 4px rgba(255, 50, 50, 0.5))
-            drop-shadow(0 0 8px rgba(255, 50, 50, 0.6));
+    filter:
+      brightness(0) saturate(100%)
+      invert(29%) sepia(95%) saturate(7473%)
+      hue-rotate(357deg) brightness(97%) contrast(122%)
+      drop-shadow(0 0 3px  rgba(255, 50, 50, 0.5))
+      drop-shadow(0 0 7px  rgba(255, 50, 50, 0.6));
   }
 }
+
 
 
 .search-icon-btn:active {
@@ -748,6 +754,7 @@ body {
     width: 230px;
   }
 }
+
 
 
 
