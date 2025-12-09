@@ -379,20 +379,20 @@ a {
   position: relative;  /* dropdown/input ko anchor karne ke liye */
 }
 
-/* 🔍 Icon button – default: PC me HIDDEN */
+/* 🔍 Icon button – desktop pe hidden, image as background */
 .search-icon-btn {
+  width: 24px;
+  height: 24px;
   border: none;
-  background: transparent;
   padding: 0;
   margin-right: 8px;
   cursor: pointer;
+  background: transparent;
+  background-image: url("https://www.citypng.com/public/uploads/preview/png-red-search-icon-button-701751694974779jbcfmubmn9.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
   display: none;    /* PC / laptop pe hidden */
-}
-
-.search-icon-btn img {
-  width: 22px;
-  height: 22px;
-  display: block;
 }
 
 /* ================================
@@ -599,19 +599,19 @@ body {
 
   /* Mobile pe search icon dikhe */
   .search-icon-btn {
-    display: block;
+    display: block !important;
   }
 
   /* Mobile default: input hidden */
   .header-search input {
-    display: none;
+    display: none !important;
     width: 150px !important;
     font-size: 0.75rem !important;
   }
 
   /* Jab JS se .active lagta hai, input niche popup jaisa aaye */
   .header-search.active input {
-    display: block;
+    display: block !important;
     position: absolute;
     top: 115%;
     right: 0;
