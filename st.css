@@ -386,13 +386,23 @@ a {
   margin-right: 8px;
   cursor: pointer;
   background: transparent;
-  background-image: url("https://www.citypng.com/public/uploads/preview/png-red-search-icon-button-701751694974779jbcfmubmn9.png");
+
+  /* ✅ TRANSPARENT ICON */
+  background-image: url("https://cdn-icons-png.flaticon.com/512/622/622669.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  border-radius: 50%;
+
+  filter: invert(1);   /* white bana dega dark bg pe */
+  opacity: 0.9;
+
   display: none; /* desktop me hidden */
 }
+
+.search-icon-btn:active {
+  transform: scale(0.95);
+}
+
 
 /* RED GLOW INPUT – desktop me visible */
 .header-search input {
@@ -599,3 +609,4 @@ body {
     width: 230px;
   }
 }
+
