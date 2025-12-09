@@ -117,9 +117,31 @@
   }
 </script>
 
+<script>
+  const searchToggleBtn = document.getElementById('searchToggle');
+  const headerSearchBox = document.querySelector('.header-search');
+  const searchInput = document.getElementById('searchInput');
+
+  if (searchToggleBtn && headerSearchBox && searchInput) {
+    searchToggleBtn.addEventListener('click', () => {
+      headerSearchBox.classList.toggle('active');
+      if (headerSearchBox.classList.contains('active')) {
+        setTimeout(() => searchInput.focus(), 50);
+      }
+    });
+
+    // Bahar click kare to close
+    document.addEventListener('click', (e) => {
+      if (!headerSearchBox.contains(e.target)) {
+        headerSearchBox.classList.remove('active');
+      }
+    });
+  }
+</script>
 
 </body>
 </html>
+
 
 
 
