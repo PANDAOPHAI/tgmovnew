@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Series - Episodes</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background-color: #0f0f0f;
+      font-family: 'Segoe UI', sans-serif;
+      color: #fff;
+    }
+
+    /* ---------- HERO ---------- */
+    .hero {
+      background-size: cover;
+      background-position: center;
+      padding: 60px 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 70vh;
+      position: relative;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.6), #0f0f0f);
+      z-index: 0;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 700px;
+    }
+    .hero h1 {
+      font-size: 3rem;
+      margin: 0 0 10px;
+    }
+    .hero p {
+      font-size: 1.05rem;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* ---------- SEASON DROPDOWN ---------- */
+    .season-bar {
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;    /* right side */
+      padding: 16px 30px 0;
+    }
+    .season-bar select {
+      background: #111;
+      color: #fff;
+      border: 1px solid #ff3c3c;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      box-shadow:
+        0 0 6px rgba(255, 60, 60, 0.4),
+        0 0 16px rgba(255, 60, 60, 0.25);
+      cursor: pointer;
+    }
+
+    /* ---------- EPISODES LIST ---------- */
+    .episodes {
+      padding: 20px 30px 40px;
+    }
+    .episodes-title {
+      font-size: 1.6rem;
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+
+    .episode-card {
+      display: flex;
+      background-color: #1c1c1c;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      overflow: hidden;
+      transition: background-color 0.2s ease,
+                  transform 0.15s ease,
+                  box-shadow 0.15s ease;
+    }
+    .episode-card:hover {
+      background-color: #272727;
+      cursor: pointer;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5);
+    }
+
+    .episode-thumb {
+      width: 260px;
+      max-height: 170px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .episode-info {
+      padding: 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .episode-info h2 {
+      margin: 0;
+      font-size: 1.3rem;
+    }
+    .episode-info p {
+      margin: 8px 0;
+      color: #ccc;
+      font-size: 0.98rem;
+    }
+    .episode-info small {
+      display: block;
+      color: #999;
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+    .play-btn {
+      padding: 10px 18px;
+      background: #e50914;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      margin-top: 10px;
+      align-self: flex-start;
+    }
+    .play-btn:hover {
+      background: #f6121d;
+    }
+
+    /* ---------- RESPONSIVE ---------- */
+    @media (max-width: 900px) {
+      .hero {
+        height: auto;
+        min-height: 60vh;
+        padding: 50px 20px;
+      }
+      .hero h1 { font-size: 2.4rem; }
+      .hero p  { font-size: 0.98rem; }
+
+      .episodes {
+        padding: 24px 20px 32px;
+      }
+      .episode-thumb {
+        width: 210px;
+        max-height: 150px;
+      }
+      .episode-info { padding: 16px; }
+      .episode-info h2 { font-size: 1.15rem; }
+    }
+
+    @media (max-width: 600px) {
+      .hero {
+        padding: 40px 16px 30px;
+        background-position: top center;
+      }
+      .hero h1 { font-size: 2rem; }
+      .hero p  { font-size: 0.9rem; }
+
+      .episodes {
+        padding: 20px 14px 28px;
+      }
+      .episodes-title { font-size: 1.3rem; }
+
+      .episode-card { flex-direction: column; }
+      .episode-thumb {
+        width: 100%;
+        height: 190px;
+        max-height: none;
+      }
+      .episode-info {
+        padding: 14px 12px 16px;
+      }
+      .episode-info h2 { font-size: 1.05rem; }
+      .episode-info p  { font-size: 0.88rem; }
+
+      .play-btn {
+        width: 100%;
+        text-align: center;
+        font-size: 0.9rem;
+        padding: 9px 0;
+        align-self: stretch;
+      }
+
+      .season-bar {
+        padding: 12px 14px 0;
+      }
+      .season-bar select {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <div class="hero" id="hero">
+    <div class="hero-content">
+      <h1 id="seriesTitle">Series</h1>
+      <p id="seriesDesc">Loading...</p>
+    </div>
+  </div>
+
+  <!-- SEASON DROPDOWN + EPISODES -->
+  <div class="episodes">
+    <div class="season-bar">
+      <select id="seasonSelect"></select>
+    </div>
+
+    <div class="episodes-title" id="seasonTitle">Episodes</div>
+    <div id="episodeList"></div>
+  </div>
+
+  <!-- DATA -->
+  <script src="movies-data.js"></script>
+
+  <script>
+    const params        = new URLSearchParams(window.location.search);
+    const seriesId      = params.get("id");
+
+    const hero          = document.getElementById("hero");
+    const titleEl       = document.getElementById("seriesTitle");
+    const descEl        = document.getElementById("seriesDesc");
+    const seasonTitleEl = document.getElementById("seasonTitle");
+    const seasonSelect  = document.getElementById("seasonSelect");
+    const episodeList   = document.getElementById("episodeList");
+
+    // 🔹 Find series object
+    const series = MOVIES.find(m => m.id === seriesId && m.type === "series");
+
+    if (!series) {
+      titleEl.textContent = "Series Not Found";
+      descEl.textContent  = "";
+      seasonTitleEl.textContent = "No episodes";
+      episodeList.innerHTML =
+        "<p style='opacity:.7'>No data for this series.</p>";
+    } else {
+      if (series.banner || series.poster) {
+        hero.style.backgroundImage =
+          `url("${series.banner || series.poster}")`;
+      }
+      titleEl.textContent = series.title;
+      descEl.textContent  = series.description || (series.genre || "");
+    }
+
+    // 🔹 All episodes for this series
+    const allEpisodes = MOVIES
+      .filter(m => m.parent === seriesId && m.type === "episode")
+      .sort((a, b) => (a.season - b.season) || (a.episode - b.episode));
+
+    if (!allEpisodes.length) {
+      seasonSelect.style.display = "none";
+      seasonTitleEl.textContent = "No episodes added yet";
+      episodeList.innerHTML =
+        "<p style='opacity:.7'>No episodes added yet.</p>";
+    } else {
+
+      // 🔹 Unique seasons (sorted)
+      const seasons = [...new Set(allEpisodes.map(ep => ep.season))]
+        .sort((a, b) => a - b);
+
+      // 🔹 Build dropdown options
+      seasons.forEach(season => {
+        const opt = document.createElement("option");
+        opt.value = season;
+        opt.textContent = "Season " + season;
+        seasonSelect.appendChild(opt);
+      });
+
+      // 🔹 Default Season (usually 1)
+      const defaultSeason = seasons[0];
+      seasonSelect.value = defaultSeason;
+
+      // 🔹 Render episodes of selected season
+      function renderSeason(seasonNumber) {
+        episodeList.innerHTML = "";
+        seasonTitleEl.textContent = `Season ${seasonNumber} Episodes`;
+
+        allEpisodes
+          .filter(ep => ep.season == seasonNumber)
+          .forEach(ep => {
+            const card = document.createElement("div");
+            card.className = "episode-card";
+            card.onclick = () => {
+              window.location.href = `player.html?id=${ep.id}`;
+            };
+
+            card.innerHTML = `
+              <img class="episode-thumb" src="${ep.poster}" alt="${ep.title}">
+              <div class="episode-info">
+                <h2>S${ep.season} E${ep.episode} - "${ep.shortTitle || ep.title}"</h2>
+                <small>${ep.year || ""} ${ep.duration ? "• " + ep.duration : ""}</small>
+                <p>${ep.overview || ""}</p>
+                <button class="play-btn">Watch Now</button>
+              </div>
+            `;
+            episodeList.appendChild(card);
+          });
+      }
+
+      // 🔹 Initial render
+      renderSeason(defaultSeason);
+
+      // 🔹 Change season
+      seasonSelect.addEventListener("change", e => {
+        renderSeason(e.target.value);
+      });
+    }
+  </script>
+
+</body>
+</html>

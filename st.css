@@ -1,0 +1,587 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  height: 100%;
+  font-family: 'Segoe UI', sans-serif;
+  color: #fff;
+  overflow-x: hidden;
+}
+
+/* Background video */
+#bg-video {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  min-width: 150%;
+  min-height: 100%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+  object-fit: cover;
+}
+
+/* Dark overlay */
+.overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: -1;
+}
+
+/* HEADER */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background: transparent;
+  position: relative;
+  z-index: 2;
+}
+
+/* LOGO gradient */
+.logo {
+  font-size: 2rem;
+  font-weight: bold;
+  font-family: sans-serif;
+  background: linear-gradient(90deg,
+    #ff416c,
+    #ff4b2b,
+    #ff8a00,
+    #f9d423,
+    #1fa2ff,
+    #12d8fa,
+    #a6ffcb,
+    #d4fc79,
+    #96e6a1,
+    #fcb045,
+    #ff6a00
+  );
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientShift 6s ease infinite;
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.logo::after {
+  content: 'TG Mov 🎬';
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: 2rem;
+  font-weight: bold;
+  font-family: sans-serif;
+  background: inherit;
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: blur(0px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, filter 0.3s ease;
+  z-index: -1;
+}
+
+.logo:hover {
+  transform: scale(1.03);
+}
+
+.logo:hover::after {
+  filter: blur(12px);
+  opacity: 0.8;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* NAV */
+nav a {
+  color: white;
+  text-decoration: none;
+  margin: 0 15px;
+  font-weight: 500;
+}
+
+/* PROFILE AVATAR */
+.profile {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+}
+
+.profile::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  padding: 2px;
+  background: linear-gradient(90deg,
+    #ff416c,
+    #ff4b2b,
+    #ff8a00,
+    #f9d423,
+    #1fa2ff,
+    #12d8fa,
+    #a6ffcb,
+    #d4fc79,
+    #96e6a1,
+    #fcb045,
+    #ff6a00
+  );
+  background-size: 300% 300%;
+  animation: gradientShift 5s ease infinite;
+  z-index: 0;
+  border-radius: 50%;
+  transition: 0.3s ease;
+  filter: blur(0px);
+  opacity: 0.6;
+}
+
+.profile:hover::before {
+  filter: blur(8px) brightness(1.3);
+  opacity: 1;
+}
+
+.profile img {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  position: relative;
+  z-index: 2;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.profile:hover img {
+  transform: scale(1.05);
+  filter: brightness(1.2);
+}
+
+/* MAIN CONTENT */
+.content {
+  padding: 100px 40px 40px;
+}
+
+/* HERO SECTION */
+.hero h1 {
+  font-size: 3.2rem;
+  margin-bottom: 10px;
+}
+
+.hero p {
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin-bottom: 15px;
+}
+
+.tags .tag {
+  background: limegreen;
+  color: black;
+  padding: 4px 10px;
+  margin-right: 10px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.buttons {
+  margin-top: 20px;
+}
+
+.watch, .download {
+  background-color: #1e90ff;
+  border: none;
+  padding: 12px 20px;
+  margin-right: 10px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.download {
+  background-color: #00bcd4;
+}
+
+.watch:hover, .download:hover {
+  opacity: 0.85;
+}
+
+/* SECTION TITLES */
+.popular h2,
+.top-rated h2,
+.all-movies h2 {
+  font-size: 1.8rem;
+  margin: 40px 0 20px;
+}
+
+/* HORIZONTAL SLIDER (Popular / Top Rated) */
+.movie-slider {
+  display: flex;
+  overflow-x: auto;
+  gap: 15px;
+  padding-bottom: 20px;
+}
+
+.movie-slider img {
+  width: 140px;
+  height: 210px;
+  object-fit: cover;
+  border-radius: 12px;
+  transition: transform 0.3s;
+}
+
+.movie-slider img:hover {
+  transform: scale(1.1);
+}
+
+/* LINKS */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ============================
+   All Movies (Dynamic Grid)
+   ============================ */
+
+.movies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 18px;
+  padding-bottom: 40px;
+}
+
+/* Each card */
+.movie-card {
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 14px;
+  padding: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Poster wrapper */
+.movie-thumb {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+/* Poster image – yahi size control karega */
+.movie-thumb img {
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+  display: block;
+}
+
+/* Quality badge (HD, 4K, etc.) */
+.badge-quality {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  background: rgba(0, 0, 0, 0.85);
+  padding: 2px 8px;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Info text */
+.movie-info h3 {
+  font-size: 0.95rem;
+  margin-bottom: 3px;
+}
+
+.movie-info p {
+  font-size: 0.78rem;
+  color: #d0d0d0;
+  line-height: 1.3;
+}
+
+/* Hover effect */
+.movie-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.8);
+  background: rgba(10, 10, 10, 0.9);
+}
+
+/* RESPONSIVE */
+@media screen and (max-width: 768px) {
+  .hero h1 {
+    font-size: 2.2rem;
+  }
+
+  nav {
+    display: none;
+  }
+
+  .movie-slider img {
+    width: 110px;
+    height: 160px;
+  }
+
+  .content {
+    padding: 80px 20px;
+  }
+
+  .movies-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .movie-thumb img {
+    height: 180px;
+  }
+
+  .movie-info h3 {
+    font-size: 0.85rem;
+  }
+
+  .movie-info p {
+    font-size: 0.7rem;
+  }
+
+}
+
+/* ================================
+   ✅ HEADER SEARCH – FINAL DESIGN
+   ================================ */
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Search container */
+.header-search {
+  margin-bottom: 0 !important;
+  display: flex;
+  align-items: center;
+}
+
+/* ================================
+   🔴 ANIMATED RED GLOW SEARCH BAR
+   ================================ */
+
+.header-search input {
+  height: 38px !important;
+  width: 220px !important;
+  padding: 6px 14px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255, 60, 60, 0.35) !important;
+  background: rgba(0, 0, 0, 0.7) !important;
+  color: #fff !important;
+  font-size: 0.85rem !important;
+  outline: none !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+
+  /* 🔥 Normal animated red glow */
+  box-shadow:
+    0 0 4px rgba(255, 60, 60, 0.2),
+    0 0 10px rgba(255, 60, 60, 0.25),
+    0 0 18px rgba(255, 60, 60, 0.15);
+
+  animation: redGlowPulse 3s ease-in-out infinite;
+  transition: all 0.25s ease !important;
+}
+
+/* Placeholder */
+.header-search input::placeholder {
+  color: #ffb0b0 !important;
+}
+
+/* 🔴 Focus = strong glow */
+.header-search input:focus {
+  border-color: #ff2a2a !important;
+  box-shadow:
+    0 0 6px rgba(255, 42, 42, 0.6),
+    0 0 16px rgba(255, 42, 42, 0.7),
+    0 0 30px rgba(255, 42, 42, 0.45) !important;
+
+  animation: redGlowStrong 1.8s ease-in-out infinite;
+}
+
+/* 🔥 Normal slow pulse */
+@keyframes redGlowPulse {
+  0% {
+    box-shadow:
+      0 0 4px rgba(255, 60, 60, 0.15),
+      0 0 10px rgba(255, 60, 60, 0.2),
+      0 0 18px rgba(255, 60, 60, 0.1);
+  }
+  50% {
+    box-shadow:
+      0 0 8px rgba(255, 60, 60, 0.4),
+      0 0 18px rgba(255, 60, 60, 0.45),
+      0 0 30px rgba(255, 60, 60, 0.25);
+  }
+  100% {
+    box-shadow:
+      0 0 4px rgba(255, 60, 60, 0.15),
+      0 0 10px rgba(255, 60, 60, 0.2),
+      0 0 18px rgba(255, 60, 60, 0.1);
+  }
+}
+
+/* 🔥 Fast glow on focus */
+@keyframes redGlowStrong {
+  0% {
+    box-shadow:
+      0 0 10px rgba(255, 42, 42, 0.6),
+      0 0 22px rgba(255, 42, 42, 0.7),
+      0 0 40px rgba(255, 42, 42, 0.4);
+  }
+  50% {
+    box-shadow:
+      0 0 18px rgba(255, 42, 42, 0.9),
+      0 0 36px rgba(255, 42, 42, 0.9),
+      0 0 60px rgba(255, 42, 42, 0.6);
+  }
+  100% {
+    box-shadow:
+      0 0 10px rgba(255, 42, 42, 0.6),
+      0 0 22px rgba(255, 42, 42, 0.7),
+      0 0 40px rgba(255, 42, 42, 0.4);
+  }
+}
+
+/* ✅ Mobile size adjust */
+@media (max-width: 768px) {
+  .header-search input {
+    width: 150px !important;
+    font-size: 0.75rem !important;
+  }
+}
+/* dropdown box */
+.search-results {
+  position: absolute;          /* ✅ ab input ke niche chipkega */
+  top: 115%;
+  right: 0;
+  width: 340px;
+  max-height: 340px;
+  overflow-y: auto;
+  background: rgba(0, 0, 0, 0.95);
+  border-radius: 14px;
+  padding: 6px;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.7),
+    0 10px 30px rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: none;
+  z-index: 9999;
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  color: #fff;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.search-result-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-1px);
+}
+
+.search-result-item img {
+  width: 42px;
+  height: 60px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.search-result-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-result-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.search-result-meta {
+  font-size: 0.75rem;
+  color: #b0b0b0;
+}
+
+/* Mobile: thoda chhota, thoda left me */
+@media (max-width: 768px) {
+  .search-results {
+    margin: 8px 20px 0 auto;
+    max-width: 260px;
+  }
+}
+/* ===============================
+   WATCH & DOWNLOAD BUTTON FIX
+   =============================== */
+
+/* WATCH BUTTON */
+button.watch {
+  background: linear-gradient(135deg, #00ffcc, #00b3ff) !important;
+  color: #000 !important;
+  font-weight: bold !important;
+  border: none !important;
+  padding: 12px 22px !important;
+  border-radius: 8px !important;
+}
+
+/* DOWNLOAD BUTTON */
+button.download {
+  background: linear-gradient(135deg, #ff3c3c, #ff7a00) !important;
+  color: #fff !important;
+  font-weight: bold !important;
+  border: none !important;
+  padding: 12px 22px !important;
+  border-radius: 8px !important;
+}
+/* ✅ GLOBAL SCROLLBAR HIDE (BUT SCROLL WORKING) */
+* {
+  scrollbar-width: none;          /* Firefox */
+  -ms-overflow-style: none;       /* IE / Edge */
+}
+
+*::-webkit-scrollbar {
+  display: none;                  /* Chrome, Safari */
+}
+
+/* ✅ HORIZONTAL SLIDER BAR HIDE (Popular / Top Rated) */
+.movie-slider {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* ✅ PAGE RIGHT SIDE VERTICAL BAR HIDE */
+body {
+  overflow-y: auto;
+}
+
+
+

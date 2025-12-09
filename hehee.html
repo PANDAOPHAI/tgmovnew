@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TG Mov</title>
+  <link rel="stylesheet" href="st.css" />
+</head>
+<body>
+
+  <!-- Background Video -->
+  <video autoplay muted loop id="bg-video">
+    <source src="theboys.webm" type="video/webm">
+    Your browser does not support HTML5 video.
+  </video>
+
+  <div class="overlay"></div>
+
+  <!-- HEADER -->
+  <header>
+    <a href="index.html"><div class="logo">TG Mov 🎬</div></a>
+
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">Series</a>
+      <a href="#">Movies</a>
+      <a href="#">Kids</a>
+    </nav>
+
+    <!-- ✅ Right Side Controls -->
+    <div class="header-right">
+      <!-- SEARCH BAR + RESULTS DROPDOWN -->
+      <div class="search-row header-search">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search movies..."
+          autocomplete="off"
+        />
+        <!-- ✅ Search results box: sirf EK, aur YAHI pe -->
+        <div id="search-results" class="search-results"></div>
+      </div>
+
+      <!-- PROFILE -->
+      <div class="profile">
+        <img src="https://i.pinimg.com/736x/56/37/12/563712bd3ce48f91d73f7bcef452c400.jpg" alt="User">
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+
+    <!-- HERO -->
+    <div class="hero">
+      <h1>The Boys</h1>
+      <p>It's the powerless against the super powerful as The Boys embark on a heroic quest to expose the truth about “The Seven,” and their formidable Vought backing.</p>
+      <div class="tags">
+        <span class="tag">Action</span>
+        <span class="tag">2022</span>
+        <span class="tag">IMDB 9.3⭐</span>
+      </div>
+      <div class="buttons">
+        <a href="series.html?id=theboys"><button class="watch">▶ Watch</button></a>
+        <button class="download" onclick="document.getElementById('errorBox').style.display='block'">⬇ Download</button>
+      </div>
+
+      <div id="errorBox" style="display:none;background:#ff4d4d;color:#fff;padding:15px;margin-top:15px;border-radius:8px;position:relative;">
+        <span style="position:absolute;top:5px;right:5px;cursor:pointer;font-weight:bold;"
+        onclick="document.getElementById('errorBox').style.display='none'">❌</span>
+        Download not available right now.
+      </div>
+    </div>
+
+    <!-- ✅ POPULAR (DYNAMIC) -->
+    <section class="popular">
+      <h2>Popular</h2>
+      <div id="popular-list" class="movie-slider"></div>
+    </section>
+
+    <!-- ✅ TOP RATED (DYNAMIC) -->
+    <section class="top-rated">
+      <h2>Top Rated</h2>
+      <div id="top-rated-list" class="movie-slider"></div>
+    </section>
+
+    <!-- ✅ ALL MOVIES (DYNAMIC GRID) -->
+    <section class="all-movies" style="margin-top:30px;">
+      <h2>All Movies</h2>
+      <div id="movie-list" class="movies-grid"></div>
+    </section>
+
+  </main>
+
+  <!-- JS -->
+  <script src="movies-data.js"></script>
+  <script src="movies-list.js"></script>
+
+</body>
+</html>

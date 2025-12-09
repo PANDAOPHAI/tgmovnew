@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>TG Mov Player</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#02060a; --panel:#0f1113; --muted:#9aa0a6; --accent:#1fb6ff; --card:#0b0d0f;
+  }
+  html,body{height:100%;margin:0;background:var(--bg);font-family:Inter,system-ui,Arial;color:#fff}
+  .wrap{max-width:1100px;margin:28px auto;padding:12px}
+  .player{position:relative;background:#000;border-radius:10px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,0.6)}
+  .video-wrap{position:relative;padding-top:56.25%;background:#000}
+  .video-pan{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;cursor:grab;background:#000}
+  video{width:100%;height:100%;object-fit:contain;transform-origin:center;will-change:transform;display:block}
+
+  /* poster overlay */
+  .poster {
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    background-size:cover; background-position:center; z-index:120;
+  }
+  .poster::after {
+    content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.5));
+  }
+  .poster-content { position:relative; z-index:2; text-align:center; color:#fff; }
+  .poster .play-circle {
+    width:110px; height:110px; border-radius:50%; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; font-size:40px; border:2px solid rgba(255,255,255,0.12); cursor:pointer;
+    transition:transform .15s ease;
+  }
+  .poster .play-circle:active{ transform:scale(.98) }
+  .poster-title { margin-top:12px; font-weight:600; font-size:16px; text-shadow:0 6px 20px rgba(0,0,0,0.6) }
+
+  /* controls */
+  .controls{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;gap:10px;padding:10px;background:linear-gradient(transparent,rgba(0,0,0,0.75));z-index:60}
+  .btn{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.03);color:#fff;padding:8px 10px;border-radius:6px;cursor:pointer}
+  .btn.icon{width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center}
+  .progress{flex:1;height:6px;background:rgba(255,255,255,0.06);border-radius:6px;position:relative;cursor:pointer}
+  .buffer{position:absolute;left:0;top:0;height:100%;width:0;background:rgba(255,255,255,0.12);z-index:1;border-radius:6px}
+  .played{position:absolute;left:0;top:0;height:100%;width:0;background:linear-gradient(90deg,var(--accent),#7ee5ff);z-index:2;border-radius:6px}
+  .time{width:110px;text-align:right;color:var(--muted);font-size:13px}
+
+  /* settings */
+  #settingsBtn{position:absolute;right:10px;top:10px;z-index:130}
+  #settingsMenu{position:absolute;right:10px;top:48px;width:320px;background:var(--panel);border-radius:10px;padding:8px;box-shadow:0 12px 40px rgba(0,0,0,0.6);z-index:200;display:none;}
+  .menu-item{margin-bottom:8px}
+  .menu-header{display:flex;align-items:center;justify-content:space-between;padding:8px;border-radius:8px;background:transparent;color:#fff;cursor:pointer}
+  .menu-header:hover{background:rgba(255,255,255,0.02)}
+  .submenu{display:none;padding:8px;border-radius:6px;background:linear-gradient(180deg,#071018,#05060a);margin-top:6px}
+  .submenu .row{display:flex;gap:8px;flex-wrap:wrap}
+  .submenu button, .submenu .small-btn { padding:8px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#dcefff;cursor:pointer }
+  .submenu .small-btn{ font-size:13px }
+  .range-row{display:flex;align-items:center;gap:8px}
+  .range-row input[type="range"]{flex:1}
+
+  /* fullscreen handling */
+  .player:fullscreen, .player:-webkit-full-screen { width:100%; height:100% }
+  .player:fullscreen .controls, .player:-webkit-full-screen .controls { z-index:250 }
+  @media (max-width:700px){ #settingsMenu{width:92%;right:4%;top:64px} .time{width:75px} }
+
+  .toast{position:absolute;top:12px;right:12px;background:#b23b3b;color:#fff;padding:8px 10px;border-radius:8px;z-index:300;display:none}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="player" id="playerEl">
+      <div class="title" id="movieTitle" style="position:absolute;left:12px;top:12px;z-index:140;font-weight:600">Loading...</div>
+
+      <button id="settingsBtn" class="btn">☸</button>
+
+      <div id="settingsMenu" role="dialog" aria-hidden="true">
+        <!-- Playback -->
+        <div class="menu-item" id="itemPlayback">
+          <div class="menu-header" data-target="submenuPlayback">Playback <span style="color:var(--muted)">▶</span></div>
+          <div class="submenu" id="submenuPlayback">
+            <div class="row">
+              <button class="small-btn" data-speed="0.5">0.5×</button>
+              <button class="small-btn" data-speed="0.75">0.75×</button>
+              <button class="small-btn" data-speed="1">1×</button>
+              <button class="small-btn" data-speed="1.25">1.25×</button>
+              <button class="small-btn" data-speed="1.5">1.5×</button>
+              <button class="small-btn" data-speed="2">2×</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Audio -->
+        <div class="menu-item" id="itemAudio">
+          <div class="menu-header" data-target="submenuAudio">Audio <span style="color:var(--muted)">▶</span></div>
+          <div class="submenu" id="submenuAudio">
+            <div class="range-row">
+              <input id="audioBoostRange" type="range" min="0" max="200" value="100">
+              <div id="audioBoostValue">100%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quality -->
+        <div class="menu-item" id="itemQuality">
+          <div class="menu-header" data-target="submenuQuality">Quality <span style="color:var(--muted)">▶</span></div>
+          <div class="submenu" id="submenuQuality">
+            <div class="row" id="qualityButtons"></div>
+            
+          </div>
+        </div>
+
+        <!-- Zoom -->
+        <div class="menu-item" id="itemZoom">
+          <div class="menu-header" data-target="submenuZoom">Zoom <span style="color:var(--muted)">▶</span></div>
+          <div class="submenu" id="submenuZoom">
+            <div class="row">
+              <button class="small-btn" data-zoom="fit">Fit</button>
+              <button class="small-btn" data-zoom="1.0">100%</button>
+              <button class="small-btn" data-zoom="1.25">125%</button>
+              <button class="small-btn" data-zoom="1.5">150%</button>
+              <button class="small-btn" data-zoom="2.0">200%</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="video-wrap">
+        <div class="video-pan" id="videoPan">
+          <video id="video" playsinline crossorigin="anonymous" preload="metadata"></video>
+        </div>
+
+        <!-- Poster overlay (click to play) -->
+        <div class="poster" id="poster" style="display:flex;">
+          <div class="poster-content">
+            <div class="play-circle" id="posterPlay">▶</div>
+            <div class="poster-title" id="posterTitle">Click to play</div>
+          </div>
+        </div>
+
+        <div class="controls no-select" id="controlsBar">
+          <button id="playBtn" class="btn icon">▶</button>
+          <button id="muteBtn" class="btn icon">🔊</button>
+
+          <div class="progress" id="progress" title="Click to seek">
+            <div class="buffer" id="buffer"></div>
+            <div class="played" id="played"></div>
+          </div>
+
+          <div class="time" id="timeText">00:00 / 00:00</div>
+
+          <button id="zoomBtn" class="btn icon" title="Quick zoom">🔍</button>
+          <!-- Picture in Picture button -->
+          <button id="pipBtn" class="btn icon" title="Picture in Picture">▣</button>
+          <button id="fsBtn" class="btn icon" title="Fullscreen">⛶</button>
+        </div>
+      </div>
+
+      <div id="toast" class="toast"></div>
+    </div>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script src="movies-data.js"></script>
+
+<script>
+(function(){
+  // ===== Dynamic movie data from movies-data.js =====
+  let FIXED_M3U8 = "";
+  let FIXED_POSTER = "";
+  let MOVIE_TITLE = "TG Mov";
+  let QUALITY_SOURCES = {};   // ✅ yahan sab quality links store honge
+
+
+   try {
+    const params = new URLSearchParams(window.location.search);
+    const movieId = params.get("id");
+    if (typeof MOVIES !== "undefined" && Array.isArray(MOVIES)) {
+      const movie = MOVIES.find(m => m.id === movieId);
+      if (movie) {
+        MOVIE_TITLE  = movie.title  || MOVIE_TITLE;
+        FIXED_POSTER = movie.banner || movie.poster || "";
+
+        // ✅ yahan quality-wise links map kar rahe hain
+        QUALITY_SOURCES = {
+          auto:  movie.stream_auto || movie.stream || "",
+          '1080p': movie.stream_1080 || "",
+          '720p':  movie.stream_720  || "",
+          '480p':  movie.stream_480  || "",
+        };
+
+        // ✅ jo pehle se default chalana hai
+        FIXED_M3U8 =
+          QUALITY_SOURCES.auto ||
+          QUALITY_SOURCES['720p'] ||
+          QUALITY_SOURCES['480p'] ||
+          QUALITY_SOURCES['1080p'] ||
+          "";
+      } else {
+        MOVIE_TITLE = "Movie not found";
+      }
+    } else {
+      MOVIE_TITLE = "Movie not found";
+    }
+  } catch(e){
+    console.error(e);
+  }
+
+  // ==================================================
+
+  // Elements
+  const playerEl = document.getElementById('playerEl');
+  const video = document.getElementById('video');
+  const playBtn = document.getElementById('playBtn');
+  const muteBtn = document.getElementById('muteBtn');
+  const progress = document.getElementById('progress');
+  const played = document.getElementById('played');
+  const buffer = document.getElementById('buffer');
+  const timeText = document.getElementById('timeText');
+  const settingsBtn = document.getElementById('settingsBtn');
+  const settingsMenu = document.getElementById('settingsMenu');
+  const toast = document.getElementById('toast');
+
+  const submenuPlayback = document.getElementById('submenuPlayback');
+  const submenuAudio = document.getElementById('submenuAudio');
+  const submenuQuality = document.getElementById('submenuQuality');
+  const submenuZoom = document.getElementById('submenuZoom');
+  const qualityButtons = document.getElementById('qualityButtons');
+  const audioBoostRange = document.getElementById('audioBoostRange');
+  const audioBoostValue = document.getElementById('audioBoostValue');
+  const zoomBtn = document.getElementById('zoomBtn');
+  const fsBtn = document.getElementById('fsBtn');
+  const videoPan = document.getElementById('videoPan');
+  const pipBtn = document.getElementById('pipBtn');
+
+  const poster = document.getElementById('poster');
+  const posterPlay = document.getElementById('posterPlay');
+  const posterTitle = document.getElementById('posterTitle');
+  const movieTitle = document.getElementById('movieTitle');
+
+  // set title & poster
+  movieTitle.textContent = MOVIE_TITLE;
+  posterTitle.textContent = MOVIE_TITLE || 'Click to play';
+  if (FIXED_POSTER) {
+    poster.style.backgroundImage = `url("${FIXED_POSTER}")`;
+  }
+
+  // HLS instance
+  let hls = null;
+  let qualities = [];
+
+  function attachSource(url){
+    if (!url) {
+      showToast('Movie not found');
+      return;
+    }
+    if (hls) { try{ hls.destroy(); } catch(e){} hls = null; }
+    if (Hls.isSupported()){
+      hls = new Hls({ enableWorker:true, maxBufferLength:30 });
+      hls.loadSource(url);
+      hls.attachMedia(video);
+      hls.on(Hls.Events.MANIFEST_PARSED, ()=> {
+        qualities = (hls.levels || []).map((lvl,i)=>({index:i,height:lvl.height||0,bitrate:lvl.bitrate||0}));
+        populateQualityMenu();
+      });
+      hls.on(Hls.Events.ERROR, (evt,data)=> {
+        console.warn('HLS error', data);
+        if (data && data.fatal) {
+          if (data.type === Hls.ErrorTypes.NETWORK_ERROR) hls.startLoad();
+          else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
+          else { try { hls.destroy(); } catch(e){} showToast('Playback error'); }
+        }
+      });
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = url;
+    } else {
+      showToast('HLS not supported in this browser');
+    }
+  }
+
+  async function startFromPoster(){
+    if (!FIXED_M3U8) { showToast('Movie not found'); return; }
+    try {
+      attachSource(FIXED_M3U8);
+      poster.style.display = 'none';
+      await new Promise(r => setTimeout(r,50));
+      const p = video.play();
+      if (p && p.catch) p.catch(()=>{});
+    } catch(e){ console.error(e); showToast('Could not start stream'); }
+  }
+
+  poster.addEventListener('click', startFromPoster);
+  posterPlay.addEventListener('click', startFromPoster);
+
+  // Play/pause
+  function togglePlay(){
+    if (video.paused) video.play(); else video.pause();
+  }
+  playBtn.addEventListener('click', togglePlay);
+  videoPan.addEventListener('click', togglePlay);
+
+  video.addEventListener('play', ()=> playBtn.textContent = '⏸');
+  video.addEventListener('pause', ()=> playBtn.textContent = '▶');
+
+  // Double tap 10s like YouTube
+  let lastTap = 0;
+  video.addEventListener('click', e=>{
+    const now = Date.now();
+    if (now - lastTap < 300){
+      const x = e.offsetX;
+      video.currentTime += x > video.clientWidth/2 ? 10 : -10;
+    }
+    lastTap = now;
+  });
+
+  // Keyboard left/right seek
+  document.addEventListener('keydown', e=>{
+    if (e.key === 'ArrowRight') video.currentTime += 10;
+    if (e.key === 'ArrowLeft') video.currentTime -= 10;
+  });
+
+  // Mute
+  muteBtn.addEventListener('click', ()=> {
+    video.muted = !video.muted;
+    muteBtn.textContent = video.muted ? '🔈' : '🔊';
+  });
+
+  // Time & progress
+  video.addEventListener('timeupdate', ()=> {
+    const d = video.duration || 0;
+    const pct = d ? (video.currentTime/d)*100 : 0;
+    played.style.width = pct + '%';
+    updateTime();
+  });
+  video.addEventListener('progress', ()=> {
+    try {
+      const b = video.buffered;
+      if (b && b.length) {
+        const end = b.end(b.length-1);
+        const pct = video.duration ? (end/video.duration)*100 : 0;
+        buffer.style.width = pct + '%';
+      }
+    } catch(e){}
+  });
+
+  function updateTime(){
+    const cur = isFinite(video.currentTime) ? video.currentTime : 0;
+    const dur = isFinite(video.duration) ? video.duration : 0;
+    timeText.textContent = formatTime(cur) + ' / ' + (dur?formatTime(dur):'00:00');
+  }
+  function formatTime(s){
+    if (!isFinite(s)) return '00:00';
+    const h = Math.floor(s/3600), m = Math.floor((s%3600)/60), sec = Math.floor(s%60);
+    return (h>0?String(h).padStart(2,'0')+':':'') + String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0');
+  }
+
+  progress.addEventListener('click', (e)=> {
+    const rect = progress.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const pct = Math.max(0, Math.min(1, x / rect.width));
+    if (video.duration) video.currentTime = pct * video.duration;
+  });
+
+  // Settings menu toggle
+  settingsBtn.addEventListener('click', (e)=> {
+    settingsMenu.style.display = (settingsMenu.style.display === 'block') ? 'none' : 'block';
+    settingsMenu.setAttribute('aria-hidden', settingsMenu.style.display !== 'block');
+    e.stopPropagation();
+  });
+  settingsMenu.addEventListener('click', e=> e.stopPropagation());
+  document.addEventListener('click', ()=> { settingsMenu.style.display = 'none'; settingsMenu.setAttribute('aria-hidden','true'); });
+
+  document.querySelectorAll('.menu-header').forEach(header=>{
+    header.addEventListener('click', ()=> {
+      const targetId = header.getAttribute('data-target');
+      document.querySelectorAll('.submenu').forEach(s=> s.style.display = 'none');
+      const el = document.getElementById(targetId);
+      el.style.display = (el.style.display === 'block') ? 'none' : 'block';
+    });
+  });
+
+  // Playback speed
+  submenuPlayback.querySelectorAll('button[data-speed]').forEach(btn=>{
+    btn.addEventListener('click', ()=> {
+      const sp = parseFloat(btn.getAttribute('data-speed'));
+      video.playbackRate = sp;
+      showToast('Speed: ' + sp + '×');
+      settingsMenu.style.display = 'none';
+    });
+  });
+
+  // Audio boost
+  let audioCtx=null, sourceNode=null, gainNode=null;
+  function ensureAudioNodes(recreate=false){
+    try{
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (sourceNode && recreate) { try{sourceNode.disconnect();}catch{} sourceNode=null; }
+      if (!sourceNode) sourceNode = audioCtx.createMediaElementSource(video);
+      if (!gainNode) gainNode = audioCtx.createGain();
+      try{ sourceNode.disconnect(); }catch{}
+      sourceNode.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+    } catch(e){ audioCtx=null; sourceNode=null; gainNode=null; }
+  }
+  audioBoostRange.addEventListener('input', ()=> {
+    const v = Number(audioBoostRange.value);
+    audioBoostValue.textContent = Math.round(v) + '%';
+    ensureAudioNodes(false);
+    if (gainNode) gainNode.gain.value = v/100;
+    else video.volume = Math.max(0, Math.min(1, v/100));
+  });
+  document.addEventListener('click', function unlock(){ if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{}); document.removeEventListener('click', unlock); });
+
+   // Quality menu – manual (Auto, 1080p, 720p, 480p)
+  function populateQualityMenu(){
+    qualityButtons.innerHTML = '';
+
+    const order = ['auto', '1080p', '720p', '480p'];
+    let available = 0;
+
+    order.forEach(label => {
+      const url = QUALITY_SOURCES[label];
+      if (!url) return;
+
+      available++;
+      const b = document.createElement('button');
+      b.className = 'small-btn';
+      b.textContent = (label === 'auto') ? 'Auto' : label;
+      b.dataset.qualityKey = label;
+
+      b.addEventListener('click', () => {
+        changeQuality(label);
+      });
+
+      qualityButtons.appendChild(b);
+    });
+
+    if (!available){
+      const d = document.createElement('div');
+      d.style.color = 'var(--muted)';
+      d.textContent = 'No qualities configured';
+      qualityButtons.appendChild(d);
+    }
+  }
+  let currentQuality = 'auto';
+
+  function changeQuality(key){
+    const url = QUALITY_SOURCES[key];
+    if (!url) {
+      showToast('Link missing for ' + key);
+      return;
+    }
+
+    const wasPaused = video.paused;
+    const curTime = video.currentTime || 0;
+
+    // ✅ naya source attach karo
+    attachSource(url);
+
+    // Wait till naya stream load ho jaye, phir seek + resume
+    const onCanPlay = () => {
+      try {
+        if (video.duration && curTime <= video.duration) {
+          video.currentTime = curTime;
+        }
+      } catch(e){}
+
+      if (!wasPaused) {
+        const p = video.play();
+        if (p && p.catch) p.catch(()=>{});
+      }
+      video.removeEventListener('canplay', onCanPlay);
+    };
+
+    video.addEventListener('canplay', onCanPlay);
+
+    currentQuality = key;
+    showToast('Quality: ' + (key === 'auto' ? 'Auto' : key));
+    settingsMenu.style.display = 'none';
+  }
+
+
+  // Zoom controls & quick zoom
+  let zoomVal = 1, panX = 0, panY = 0;
+  function applyZoom(){ video.style.transform = `scale(${zoomVal}) translate(${panX}px,${panY}px)`; }
+  submenuZoom.querySelectorAll('button[data-zoom]').forEach(b=>{
+    b.addEventListener('click', ()=> {
+      const z = b.getAttribute('data-zoom');
+      if (z === 'fit'){ zoomVal = 1; panX = 0; panY = 0; video.style.objectFit = 'contain'; }
+      else { zoomVal = Number(z); video.style.objectFit = 'none'; }
+      applyZoom(); settingsMenu.style.display = 'none';
+    });
+  });
+  const zoomPresets = ['fit','1.0','1.25','1.5','2.0']; let zoomIndex = 0;
+  zoomBtn.addEventListener('click', ()=> {
+    zoomIndex = (zoomIndex + 1) % zoomPresets.length;
+    const z = zoomPresets[zoomIndex];
+    if (z === 'fit'){ zoomVal = 1; panX = 0; panY = 0; video.style.objectFit = 'contain'; } else zoomVal = Number(z);
+    applyZoom();
+  });
+
+  // pan when zoomed
+  let dragging = false, lastX = 0, lastY = 0;
+  videoPan.addEventListener('pointerdown', e=> { if (zoomVal <= 1) return; dragging = true; lastX = e.clientX; lastY = e.clientY; videoPan.setPointerCapture(e.pointerId); });
+  videoPan.addEventListener('pointermove', e=> { if (!dragging) return; panX += (e.clientX - lastX) / zoomVal; panY += (e.clientY - lastY) / zoomVal; lastX = e.clientX; lastY = e.clientY; applyZoom(); });
+  videoPan.addEventListener('pointerup', e=> { dragging = false; try{ videoPan.releasePointerCapture(e.pointerId); }catch{} });
+  videoPan.addEventListener('pointercancel', ()=> { dragging = false; });
+
+    // ✅ Fullscreen FIX: Android + iPhone Safe
+  fsBtn.addEventListener('click', async ()=> {
+    try {
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+      // ✅ iOS Safari only allows <video> fullscreen
+      if (isIOS && typeof video.webkitEnterFullscreen === 'function') {
+        if (video.webkitDisplayingFullscreen) {
+          video.webkitExitFullscreen();
+        } else {
+          video.webkitEnterFullscreen();
+        }
+        return;
+      }
+
+      // ✅ Android + PC Fullscreen
+      if (!document.fullscreenElement) {
+        if (playerEl.requestFullscreen) {
+          await playerEl.requestFullscreen();
+        } else if (playerEl.webkitRequestFullscreen) {
+          await playerEl.webkitRequestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          await document.webkitExitFullscreen();
+        }
+      }
+
+    } catch(e){
+      console.warn("Fullscreen error:", e);
+      showToast("Fullscreen not supported");
+    }
+  });
+
+
+  // Picture-in-Picture
+  if (!('pictureInPictureEnabled' in document) || video.disablePictureInPicture) {
+    pipBtn.style.display = 'none';
+  }
+  pipBtn.addEventListener('click', async ()=> {
+    try {
+      if (document.fullscreenElement && document.exitFullscreen) {
+        await document.exitFullscreen();
+      }
+      if (document.pictureInPictureElement) {
+        await document.exitPictureInPicture();
+      } else {
+        await video.requestPictureInPicture();
+      }
+    } catch(err) {
+      console.error(err);
+      showToast('Unable to start Picture in Picture');
+    }
+  });
+  video.addEventListener('enterpictureinpicture', ()=> {
+    pipBtn.textContent = '◼';
+    pipBtn.title = 'Exit Picture in Picture';
+  });
+  video.addEventListener('leavepictureinpicture', ()=> {
+    pipBtn.textContent = '▣';
+    pipBtn.title = 'Picture in Picture';
+  });
+
+  // toast helper
+  let toastTimer = null;
+  function showToast(msg, ms = 2000){
+    toast.textContent = msg; toast.style.display = 'block';
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=> { toast.style.display = 'none'; toastTimer = null; }, ms);
+  }
+
+  // expose for debug
+  window.attachSource = attachSource;
+  window._hls = ()=> hls;
+// ✅ Space key = Play / Pause
+document.addEventListener("keydown", function (e) {
+  // Input / range / text field me space ka effect disable rahe
+  const tag = document.activeElement.tagName.toLowerCase();
+  if (tag === "input" || tag === "textarea") return;
+
+  if (e.code === "Space") {
+    e.preventDefault(); // Page scroll rukega
+    if (video.paused) {
+      video.play();
+    } else {
+      video.pause();
+    }
+  }
+});
+
+})();
+</script>
+</body>
+</html>
