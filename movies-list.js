@@ -158,5 +158,3 @@ if (topRatedList && typeof MOVIES !== "undefined") {
       topRatedList.appendChild(card);
     });
 }
-
-
