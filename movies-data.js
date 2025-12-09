@@ -443,8 +443,11 @@ const MOVIES = [
     poster: "https://lionsgate.brightspotcdn.com/59/e8/576c91ae47e4aa7fd6240dc48674/john-wick-chapter-1-movies-poster-01.jpg",
     banner: "https://wallpapercave.com/wp/wp1826761.jpg",
 
-    stream: "https://cdn30091.ensta392zij.com/stream2/i-arch-400/e7fa9bd8ea5e8df9401f75ea48b11455/MJTMsp1RshGTygnMNRUR2N2MSlnWXZEdMNDZzQWe5MDZzMmdZJTO1R2RWVHZDljekhkSsl1VwYnWtx2cihVT21EVNdnTU10MNp2awkVbJJTWU10MZp3azkFVFJjTU10MPdVS14UbWlmWqFUP:1765288878:103.101.90.195:ae3557d92595335eb6b86fd225a85cc4540b1896552969f4e02b9824bf4d7576/360/index.m3u8",
-
+   stream: "https://cdn30091.ensta392zij.com/stream2/i-arch-400/e7fa9bd8ea5e8df9401f75ea48b11455/MJTMsp1RshGTygnMNRUR2N2MSlnWXZEdMNDZzQWe5MDZzMmdZJTO1R2RWVHZDljekhkSsl1VwYnWtx2cihVT21EVNdnTU10MNp2awkVbJJTWU10MZp3azkFVFJjTU10MPdVS14UbWlmWqFUP:1765288878:103.101.90.195:ae3557d92595335eb6b86fd225a85cc4540b1896552969f4e02b9824bf4d7576/360/index.m3u8",
+    stream_auto: "https://cdn30091.ensta392zij.com/stream2/i-arch-400/e7fa9bd8ea5e8df9401f75ea48b11455/MJTMsp1RshGTygnMNRUR2N2MSlnWXZEdMNDZzQWe5MDZzMmdZJTO1R2RWVHZDljekhkSsl1VwYnWtx2cihVT21EVNdnTU10MNp2awkVbJJTWU10MZp3azkFVFJjTU10MPdVS14UbWlmWqFUP:1765288878:103.101.90.195:ae3557d92595335eb6b86fd225a85cc4540b1896552969f4e02b9824bf4d7576/360/index.m3u8",
+    stream_1080: "",
+    stream_720: "https://cdn30091.ensta392zij.com/stream2/i-arch-400/e7fa9bd8ea5e8df9401f75ea48b11455/MJTMsp1RshGTygnMNRUR2N2MSlnWXZEdMNDZzQWe5MDZzMmdZJTO1R2RWVHZDljekhkSsl1VwYnWtx2cihVT21EVNdnTU10MNp2awkVbJJTWU10MZp3azkFVFJjTU10MPdVS14UbWlmWqFUP:1765288878:103.101.90.195:ae3557d92595335eb6b86fd225a85cc4540b1896552969f4e02b9824bf4d7576/360/index.m3u8",
+    stream_480: "",
     rating: 7.9,
     category: "all"
   },
@@ -660,4 +663,5 @@ const MOVIES = [
 
 
 ];
+
 
