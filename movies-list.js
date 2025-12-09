@@ -123,6 +123,22 @@ if (popularList && typeof MOVIES !== "undefined") {
       popularList.appendChild(card);
     });
 }
+/* =========================
+   ⭐ ANIME MOVIES
+========================= */
+
+if (animeList && typeof MOVIES !== "undefined") {
+  animeList.innerHTML = "";
+
+  MOVIES
+    .filter(m => m.category === "Anime" && m.type !== "episode")
+    .forEach(movie => {
+      const card = document.createElement("a");
+      card.href = getTargetHref(movie);
+      card.innerHTML = `<img src="${movie.poster}" alt="${movie.title}">`;
+      animeList.appendChild(card);
+    });
+}
 
 
 /* =========================
@@ -141,3 +157,4 @@ if (topRatedList && typeof MOVIES !== "undefined") {
       topRatedList.appendChild(card);
     });
 }
+
