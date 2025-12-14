@@ -7,152 +7,382 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#02060a; --panel:#0f1113; --muted:#9aa0a6; --accent:#1fb6ff; --card:#0b0d0f;
+    --bg:#02060a; --panel:#0f1113; --muted:#9aa0a6; --accent:#1fb6ff; --card:#0b0d0f; --max-width:1100px;
   }
-  html,body{height:100%;margin:0;background:var(--bg);font-family:Inter,system-ui,Arial;color:#fff}
-  .wrap{max-width:1100px;margin:28px auto;padding:12px}
-  .player{position:relative;background:#000;border-radius:10px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,0.6)}
-  .video-wrap{position:relative;padding-top:56.25%;background:#000}
-  .video-pan{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;cursor:grab;background:#000}
-  video{width:100%;height:100%;object-fit:contain;transform-origin:center;will-change:transform;display:block}
+  html,body{height:100%;margin:0;background:var(--bg);font-family:Inter,system-ui,Arial;color:#fff;-webkit-font-smoothing:antialiased;}
 
-  /* poster overlay */
-  .poster {
-    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-    background-size:cover; background-position:center; z-index:120;
+  /* layout */
+  .outer{display:flex;align-items:flex-start;justify-content:center;padding:18px}
+  .wrap{width:100%;max-width:var(--max-width)}
+  .player{margin:0 auto;position:relative;background:#000;border-radius:10px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,0.6)}
+  .video-wrap{position:relative;padding-top:56.25%;background:#000}
+  .video-pan{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;cursor:grab;background:#000;touch-action:none}
+  video{width:100%;height:100%;object-fit:contain;transform-origin:center;will-change:transform;display:block;background:#000}
+
+  /* iframe embed */
+  .embed-iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0;display:none;z-index:140;background:#000}
+
+  /* overlay to cover iframe icon (top-right) */
+  .iframe-overlay{
+    position:absolute;
+    top:50px;
+    right:11px;
+    width:48px;
+    height:48px;
+    z-index:1000; /* above iframe */
+    border-radius:8px;
+    background-repeat:no-repeat;
+    background-position:center;
+    background-size:24px 24px;
+    background-color:rgba(0,0,0,0.0);
+    /* small translucent circle default; replace url(...) with your logo if you prefer */
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><circle cx="12" cy="12" r="10" fill="%23ffffff" opacity="0.06"/></svg>');
+    cursor:default;
+    -webkit-tap-highlight-color:transparent;
+    display:none;
+    box-shadow:0 6px 18px rgba(0,0,0,0.25);
+    pointer-events:auto;
   }
-  .poster::after {
-    content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.5));
-  }
-  .poster-content { position:relative; z-index:2; text-align:center; color:#fff; }
-  .poster .play-circle {
-    width:110px; height:110px; border-radius:50%; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; font-size:40px; border:2px solid rgba(255,255,255,0.12); cursor:pointer;
-    transition:transform .15s ease;
-  }
-  .poster .play-circle:active{ transform:scale(.98) }
-  .poster-title { margin-top:12px; font-weight:600; font-size:16px; text-shadow:0 6px 20px rgba(0,0,0,0.6) }
+
+  /* poster */
+  .poster{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background-size:cover;background-position:center;z-index:120}
+  .poster::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.5))}
+  .poster-content{position:relative;z-index:2;text-align:center;color:#fff}
+  .play-circle{width:110px;height:110px;border-radius:50%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;font-size:40px;border:2px solid rgba(255,255,255,0.12);cursor:pointer;transition:transform .12s ease}
+  .play-circle:active{transform:scale(.98)}
+  .poster-title{margin-top:12px;font-weight:600;font-size:16px;text-shadow:0 6px 20px rgba(0,0,0,0.6)}
 
   /* controls */
-  .controls{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;gap:10px;padding:10px;background:linear-gradient(transparent,rgba(0,0,0,0.75));z-index:60}
-  .btn{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.03);color:#fff;padding:8px 10px;border-radius:6px;cursor:pointer}
-  .btn.icon{width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center}
-  .progress{flex:1;height:6px;background:rgba(255,255,255,0.06);border-radius:6px;position:relative;cursor:pointer}
+  .controls{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;gap:10px;padding:10px;background:linear-gradient(transparent, rgba(0,0,0,0.78));z-index:60}
+  .btn{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.03);color:#fff;padding:8px 10px;border-radius:6px;cursor:pointer;font-size:14px}
+  .btn.icon{width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;padding:0}
+  .progress{flex:1;height:6px;background:rgba(255,255,255,0.06);border-radius:6px;position:relative;cursor:pointer;min-width:120px}
   .buffer{position:absolute;left:0;top:0;height:100%;width:0;background:rgba(255,255,255,0.12);z-index:1;border-radius:6px}
   .played{position:absolute;left:0;top:0;height:100%;width:0;background:linear-gradient(90deg,var(--accent),#7ee5ff);z-index:2;border-radius:6px}
   .time{width:110px;text-align:right;color:var(--muted);font-size:13px}
 
+  /* servers (centered) */
+  .servers-wrap{width:100%;max-width:var(--max-width);margin:14px auto 40px;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
+  .server-list{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  .server-list button{padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:#dcefff;cursor:pointer;font-size:14px}
+  .server-list button.active{background:linear-gradient(90deg,var(--accent),#7ee5ff);color:#000;border:0}
+
   /* settings */
-  #settingsBtn{position:absolute;right:10px;top:10px;z-index:130}
-  #settingsMenu{position:absolute;right:10px;top:48px;width:320px;background:var(--panel);border-radius:10px;padding:8px;box-shadow:0 12px 40px rgba(0,0,0,0.6);z-index:200;display:none;}
-  .menu-item{margin-bottom:8px}
+  #settingsBtn{position:absolute;right:10px;top:10px;z-index:140}
+  #settingsMenu{position:absolute;right:10px;top:48px;width:320px;background:var(--panel);border-radius:10px;padding:8px;box-shadow:0 12px 40px rgba(0,0,0,0.6);z-index:200;display:none}
+  .menu-item{margin-bottom:8px;color:#fff}
   .menu-header{display:flex;align-items:center;justify-content:space-between;padding:8px;border-radius:8px;background:transparent;color:#fff;cursor:pointer}
-  .menu-header:hover{background:rgba(255,255,255,0.02)}
   .submenu{display:none;padding:8px;border-radius:6px;background:linear-gradient(180deg,#071018,#05060a);margin-top:6px}
   .submenu .row{display:flex;gap:8px;flex-wrap:wrap}
-  .submenu button, .submenu .small-btn { padding:8px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#dcefff;cursor:pointer }
-  .submenu .small-btn{ font-size:13px }
+  .small-btn{padding:8px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#dcefff;cursor:pointer;font-size:13px}
   .range-row{display:flex;align-items:center;gap:8px}
   .range-row input[type="range"]{flex:1}
 
-  /* fullscreen handling */
-  .player:fullscreen, .player:-webkit-full-screen { width:100%; height:100% }
-  .player:fullscreen .controls, .player:-webkit-full-screen .controls { z-index:250 }
-  @media (max-width:700px){ #settingsMenu{width:92%;right:4%;top:64px} .time{width:75px} }
+  .toast{position:fixed;top:12px;right:12px;background:#b23b3b;color:#fff;padding:8px 10px;border-radius:8px;z-index:300;display:none}
 
-  .toast{position:absolute;top:12px;right:12px;background:#b23b3b;color:#fff;padding:8px 10px;border-radius:8px;z-index:300;display:none}
+  @media (max-width:700px){
+    .wrap{padding:6px}
+    .controls{padding:12px;gap:8px}
+    .btn{padding:8px;font-size:13px}
+    .time{width:80px;font-size:12px}
+    .server-list button{padding:8px 10px;font-size:13px}
+    .play-circle{width:88px;height:88px;font-size:34px}
+  }
+  /* Put this near the end of your stylesheet */
+@media (max-width: 900px) {
+  /* make outer fill viewport and center child vertically */
+  .outer {
+    min-height: 100vh;           /* full viewport height */
+    display: flex !important;    /* already flex, keep it */
+    align-items: center !important;  /* vertical center */
+    justify-content: center;
+    padding: 18px 12px;
+  }
+
+  /* Slightly reduce top padding so player doesn't hug header */
+  .wrap { padding-top: 6px; }
+
+  /* Keep player width responsive but don't let it grow too tall */
+  .player {
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+    /* limit height so it stays visible on short phones */
+    max-height: calc(100vh - 120px);
+  }
+
+  .video-wrap { /* make video scale inside the constrained player */
+    height: auto;
+    padding-top: 56.25%;
+    max-height: calc(100vh - 200px);
+  }
+}
+/* Quality badge (floating small dropdown) */
+.quality-badge {
+  position: absolute;
+  top: 12px;
+  right: 56px;              /* a bit left of settings button */
+  z-index: 420;
+  background: rgba(10,10,12,0.75);
+  border: 1px solid rgba(255,255,255,0.06);
+  color: #dcefff;
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+  user-select: none;
+}
+.quality-badge svg { width:14px; height:14px; opacity:0.85; }
+
+.quality-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 120px;
+  background: var(--panel);
+  border-radius: 8px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+  padding: 6px;
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+}
+.quality-menu button {
+  background: transparent;
+  border: none;
+  color: #dcefff;
+  text-align: left;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.quality-menu button:hover{ background: rgba(255,255,255,0.02); }
+.quality-menu button.active{ background: linear-gradient(90deg,var(--accent),#7ee5ff); color:#000; border:0; }
+.notice-bar {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto 12px auto;
+  padding: 12px 16px;
+  background: linear-gradient(90deg, #1f2937, #0f1113);
+  color: #dcefff;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+  text-align: center;
+  line-height: 1.4;
+  letter-spacing: 0.2px;
+}
+.notice-bar span {
+  opacity: 0.8;
+}
+@media (max-width: 700px) {
+  .notice-bar {
+    font-size: 13px;
+    padding: 10px 12px;
+  }
+}
+/* --------------------------------------------------------
+   🔥 PREMIUM TOP-NOTCH TG MOV BRAND BADGE (NEON + GLASS + RGB)
+   -------------------------------------------------------- */
+.brand-badge{
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  z-index: 99999;
+
+  padding: 14px 26px;
+  border-radius: 14px;
+
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: 1.6px;
+  font-family: 'Inter', system-ui, sans-serif;
+  color: white;
+
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(14px) saturate(160%);
+  border: 1px solid rgba(255,255,255,0.08);
+
+  text-shadow:
+     0 0 3px rgba(255,255,255,0.4),
+     0 0 12px rgba(255,255,255,0.25);
+
+  overflow: hidden;
+
+  /* Glow pulse */
+  animation: badgePulse 6s ease-in-out infinite;
+}
+
+/* Inner RGB moving gradient shine */
+.brand-badge::before{
+  content:"";
+  position:absolute;
+  inset: -2px;
+  z-index:-1;
+
+  background: linear-gradient(
+    110deg,
+    rgba(123, 97, 255, 0.65),
+    rgba(31, 182, 255, 0.65),
+    rgba(66, 255, 180, 0.65),
+    rgba(255, 93, 140, 0.65)
+  );
+
+  background-size: 400% 400%;
+  filter: blur(24px);
+  animation: rgbFluidMove 8s ease infinite;
+}
+
+/* Subtle neon ring around */
+.brand-badge::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius: inherit;
+  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow:
+      0 0 18px rgba(31,182,255,0.25),
+      0 0 36px rgba(123,97,255,0.22),
+      inset 0 0 8px rgba(255,255,255,0.10);
+  pointer-events: none;
+}
+
+/* RGB shifting background animation */
+@keyframes rgbFluidMove{
+  0%{ background-position: 0% 50%; }
+  50%{ background-position: 100% 50%; }
+  100%{ background-position: 0% 50%; }
+}
+
+/* Breathing neon glow */
+@keyframes badgePulse{
+  0% { transform: translateY(0); box-shadow: 0 6px 28px rgba(0,0,0,0.45); }
+  50%{ transform: translateY(-1px); box-shadow: 0 12px 48px rgba(0,0,0,0.55); }
+  100%{ transform: translateY(0); box-shadow: 0 6px 28px rgba(0,0,0,0.45); }
+}
+
+/* Mobile scaling */
+@media(max-width: 600px){
+  .brand-badge{
+    padding: 10px 18px;
+    font-size: 15px;
+    top: 14px;
+    left: 14px;
+    border-radius: 10px;
+  }
+}
+
+
+
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="player" id="playerEl">
-      <div class="title" id="movieTitle" style="position:absolute;left:12px;top:12px;z-index:140;font-weight:600">Loading...</div>
+<div class="brand-badge" id="brandBadge">TG MOV</div>
 
-      <button id="settingsBtn" class="btn">☸</button>
 
-      <div id="settingsMenu" role="dialog" aria-hidden="true">
-        <!-- Playback -->
-        <div class="menu-item" id="itemPlayback">
-          <div class="menu-header" data-target="submenuPlayback">Playback <span style="color:var(--muted)">▶</span></div>
-          <div class="submenu" id="submenuPlayback">
-            <div class="row">
-              <button class="small-btn" data-speed="0.5">0.5×</button>
-              <button class="small-btn" data-speed="0.75">0.75×</button>
-              <button class="small-btn" data-speed="1">1×</button>
-              <button class="small-btn" data-speed="1.25">1.25×</button>
-              <button class="small-btn" data-speed="1.5">1.5×</button>
-              <button class="small-btn" data-speed="2">2×</button>
+<br><br><h3><div class="notice-bar" id="noticeBar">
+  ⚠️ Player not working? Try switching to another Server / Player below.
+</div>
+</h3>
+  <div class="outer">
+    <div class="wrap">
+      <div class="player" id="playerEl">
+        <div class="title" id="movieTitle" style="position:absolute;left:12px;top:12px;z-index:140;font-weight:600">Loading...</div>
+		
+
+        <button id="settingsBtn" class="btn">☸</button>
+
+        <div id="settingsMenu" role="dialog" aria-hidden="true">
+          <div class="menu-item">
+            <div class="menu-header" data-target="submenuPlayback">Playback speed <span style="color:var(--muted)">▶</span></div>
+            <div class="submenu" id="submenuPlayback">
+              <div class="row">
+                <button class="small-btn" data-speed="0.5">0.5×</button>
+                <button class="small-btn" data-speed="0.75">0.75×</button>
+                <button class="small-btn" data-speed="1">1×</button>
+                <button class="small-btn" data-speed="1.25">1.25×</button>
+                <button class="small-btn" data-speed="1.5">1.5×</button>
+                <button class="small-btn" data-speed="2">2×</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-item">
+            <div class="menu-header" data-target="submenuAudio">Audio boost <span style="color:var(--muted)">▶</span></div>
+            <div class="submenu" id="submenuAudio">
+              <div class="range-row">
+                <input id="audioBoostRange" type="range" min="0" max="200" value="100">
+                <div id="audioBoostValue">100%</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-item">
+            <div class="menu-header" data-target="submenuZoom">Zoom <span style="color:var(--muted)">▶</span></div>
+            <div class="submenu" id="submenuZoom">
+              <div class="row">
+                <button class="small-btn" data-zoom="fit">Fit</button>
+                <button class="small-btn" data-zoom="1.0">100%</button>
+                <button class="small-btn" data-zoom="1.25">125%</button>
+                <button class="small-btn" data-zoom="1.5">150%</button>
+                <button class="small-btn" data-zoom="2.0">200%</button>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Audio -->
-        <div class="menu-item" id="itemAudio">
-          <div class="menu-header" data-target="submenuAudio">Audio <span style="color:var(--muted)">▶</span></div>
-          <div class="submenu" id="submenuAudio">
-            <div class="range-row">
-              <input id="audioBoostRange" type="range" min="0" max="200" value="100">
-              <div id="audioBoostValue">100%</div>
+        <div class="video-wrap">
+          <div class="video-pan" id="videoPan">
+            <video id="video" playsinline crossorigin="anonymous" preload="metadata"></video>
+
+            <!-- iframe embed -->
+            <iframe id="embedFrame" class="embed-iframe"
+              allowfullscreen
+              allow="autoplay; fullscreen; picture-in-picture; encrypted-media; accelerometer; gyroscope"></iframe>
+
+            <!-- overlay (inside .video-pan) that covers iframe's top-right icon -->
+            <div id="iframeOverlay" class="iframe-overlay" role="button" aria-label="Embed action blocked" tabindex="0"></div>
+          </div>
+
+          <div class="poster" id="poster" style="display:flex;">
+            <div class="poster-content">
+              <div class="play-circle" id="posterPlay">▶</div>
+              <div class="poster-title" id="posterTitle">Click to play</div>
             </div>
+          </div>
+
+          <div class="controls no-select" id="controlsBar">
+            <button id="playBtn" class="btn icon" title="Play/Pause">▶</button>
+            <button id="muteBtn" class="btn icon" title="Mute/Unmute">🔊</button>
+
+            <div class="progress" id="progress" title="Click to seek">
+              <div class="buffer" id="buffer"></div>
+              <div class="played" id="played"></div>
+            </div>
+
+            <div class="time" id="timeText">00:00 / 00:00</div>
+
+            <button id="zoomBtn" class="btn icon" title="Quick zoom">🔍</button>
+            <button id="pipBtn" class="btn icon" title="Picture in Picture">▣</button>
+            <button id="fsBtn" class="btn icon" title="Fullscreen">⛶</button>
           </div>
         </div>
 
-        <!-- Quality -->
-        <div class="menu-item" id="itemQuality">
-          <div class="menu-header" data-target="submenuQuality">Quality <span style="color:var(--muted)">▶</span></div>
-          <div class="submenu" id="submenuQuality">
-            <div class="row" id="qualityButtons"></div>
-            
-          </div>
-        </div>
-
-        <!-- Zoom -->
-        <div class="menu-item" id="itemZoom">
-          <div class="menu-header" data-target="submenuZoom">Zoom <span style="color:var(--muted)">▶</span></div>
-          <div class="submenu" id="submenuZoom">
-            <div class="row">
-              <button class="small-btn" data-zoom="fit">Fit</button>
-              <button class="small-btn" data-zoom="1.0">100%</button>
-              <button class="small-btn" data-zoom="1.25">125%</button>
-              <button class="small-btn" data-zoom="1.5">150%</button>
-              <button class="small-btn" data-zoom="2.0">200%</button>
-            </div>
-          </div>
-        </div>
+        <div id="toast" class="toast"></div>
       </div>
-
-      <div class="video-wrap">
-        <div class="video-pan" id="videoPan">
-          <video id="video" playsinline crossorigin="anonymous" preload="metadata"></video>
-        </div>
-
-        <!-- Poster overlay (click to play) -->
-        <div class="poster" id="poster" style="display:flex;">
-          <div class="poster-content">
-            <div class="play-circle" id="posterPlay">▶</div>
-            <div class="poster-title" id="posterTitle">Click to play</div>
-          </div>
-        </div>
-
-        <div class="controls no-select" id="controlsBar">
-          <button id="playBtn" class="btn icon">▶</button>
-          <button id="muteBtn" class="btn icon">🔊</button>
-
-          <div class="progress" id="progress" title="Click to seek">
-            <div class="buffer" id="buffer"></div>
-            <div class="played" id="played"></div>
-          </div>
-
-          <div class="time" id="timeText">00:00 / 00:00</div>
-
-          <button id="zoomBtn" class="btn icon" title="Quick zoom">🔍</button>
-          <!-- Picture in Picture button -->
-          <button id="pipBtn" class="btn icon" title="Picture in Picture">▣</button>
-          <button id="fsBtn" class="btn icon" title="Fullscreen">⛶</button>
-        </div>
-      </div>
-
-      <div id="toast" class="toast"></div>
     </div>
+  </div>
+
+  <!-- servers area (centered) -->
+  <div class="servers-wrap" aria-hidden="false">
+    <div class="server-list" id="serverList"></div>
   </div>
 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
@@ -160,14 +390,14 @@
 
 <script>
 (function(){
-  // ===== Dynamic movie data from movies-data.js =====
+  // ===== Data (movies-data.js) =====
   let FIXED_M3U8 = "";
   let FIXED_POSTER = "";
   let MOVIE_TITLE = "TG Mov";
-  let QUALITY_SOURCES = {};   // ✅ yahan sab quality links store honge
+  let QUALITY_SOURCES = {};
+  let EMBED_SERVERS = {};
 
-
-   try {
+  try {
     const params = new URLSearchParams(window.location.search);
     const movieId = params.get("id");
     if (typeof MOVIES !== "undefined" && Array.isArray(MOVIES)) {
@@ -175,35 +405,19 @@
       if (movie) {
         MOVIE_TITLE  = movie.title  || MOVIE_TITLE;
         FIXED_POSTER = movie.banner || movie.poster || "";
-
-        // ✅ yahan quality-wise links map kar rahe hain
         QUALITY_SOURCES = {
           auto:  movie.stream_auto || movie.stream || "",
           '1080p': movie.stream_1080 || "",
           '720p':  movie.stream_720  || "",
           '480p':  movie.stream_480  || "",
         };
-
-        // ✅ jo pehle se default chalana hai
-        FIXED_M3U8 =
-          QUALITY_SOURCES.auto ||
-          QUALITY_SOURCES['720p'] ||
-          QUALITY_SOURCES['480p'] ||
-          QUALITY_SOURCES['1080p'] ||
-          "";
-      } else {
-        MOVIE_TITLE = "Movie not found";
+        EMBED_SERVERS = movie.embed_servers || {};
+        FIXED_M3U8 = QUALITY_SOURCES.auto || QUALITY_SOURCES['720p'] || QUALITY_SOURCES['480p'] || QUALITY_SOURCES['1080p'] || "";
       }
-    } else {
-      MOVIE_TITLE = "Movie not found";
     }
-  } catch(e){
-    console.error(e);
-  }
+  } catch(e){ console.error(e); }
 
-  // ==================================================
-
-  // Elements
+  // ===== elements =====
   const playerEl = document.getElementById('playerEl');
   const video = document.getElementById('video');
   const playBtn = document.getElementById('playBtn');
@@ -212,388 +426,454 @@
   const played = document.getElementById('played');
   const buffer = document.getElementById('buffer');
   const timeText = document.getElementById('timeText');
-  const settingsBtn = document.getElementById('settingsBtn');
-  const settingsMenu = document.getElementById('settingsMenu');
-  const toast = document.getElementById('toast');
-
-  const submenuPlayback = document.getElementById('submenuPlayback');
-  const submenuAudio = document.getElementById('submenuAudio');
-  const submenuQuality = document.getElementById('submenuQuality');
-  const submenuZoom = document.getElementById('submenuZoom');
-  const qualityButtons = document.getElementById('qualityButtons');
-  const audioBoostRange = document.getElementById('audioBoostRange');
-  const audioBoostValue = document.getElementById('audioBoostValue');
-  const zoomBtn = document.getElementById('zoomBtn');
-  const fsBtn = document.getElementById('fsBtn');
-  const videoPan = document.getElementById('videoPan');
-  const pipBtn = document.getElementById('pipBtn');
-
   const poster = document.getElementById('poster');
   const posterPlay = document.getElementById('posterPlay');
   const posterTitle = document.getElementById('posterTitle');
   const movieTitle = document.getElementById('movieTitle');
+  const serverList = document.getElementById('serverList');
+  const embedFrame = document.getElementById('embedFrame');
+  const iframeOverlay = document.getElementById('iframeOverlay');
+  const settingsBtn = document.getElementById('settingsBtn');
+  const settingsMenu = document.getElementById('settingsMenu');
 
-  // set title & poster
+  const submenuPlayback = document.getElementById('submenuPlayback');
+  const submenuAudio = document.getElementById('submenuAudio');
+  const submenuZoom = document.getElementById('submenuZoom');
+  const audioBoostRange = document.getElementById('audioBoostRange');
+  const audioBoostValue = document.getElementById('audioBoostValue');
+
+  // title/poster
   movieTitle.textContent = MOVIE_TITLE;
   posterTitle.textContent = MOVIE_TITLE || 'Click to play';
-  if (FIXED_POSTER) {
-    poster.style.backgroundImage = `url("${FIXED_POSTER}")`;
-  }
+  if (FIXED_POSTER) poster.style.backgroundImage = `url("${FIXED_POSTER}")`;
 
-  // HLS instance
+  // ===== HLS =====
   let hls = null;
-  let qualities = [];
-
   function attachSource(url){
-    if (!url) {
-      showToast('Movie not found');
-      return;
-    }
+    if (!url) return showToast('No HLS link');
+    hideEmbed(); // hide iframe if any
     if (hls) { try{ hls.destroy(); } catch(e){} hls = null; }
     if (Hls.isSupported()){
       hls = new Hls({ enableWorker:true, maxBufferLength:30 });
       hls.loadSource(url);
       hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, ()=> {
-        qualities = (hls.levels || []).map((lvl,i)=>({index:i,height:lvl.height||0,bitrate:lvl.bitrate||0}));
-        populateQualityMenu();
-      });
-      hls.on(Hls.Events.ERROR, (evt,data)=> {
-        console.warn('HLS error', data);
-        if (data && data.fatal) {
-          if (data.type === Hls.ErrorTypes.NETWORK_ERROR) hls.startLoad();
-          else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
-          else { try { hls.destroy(); } catch(e){} showToast('Playback error'); }
-        }
-      });
+      hls.on(Hls.Events.MANIFEST_PARSED, ()=> { showToast('Player loaded'); });
+      hls.on(Hls.Events.ERROR, (evt,data)=> { console.warn('HLS error', data); if (data && data.fatal){ try{ hls.destroy(); }catch{} showToast('Playback error'); } });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
       video.src = url;
-    } else {
-      showToast('HLS not supported in this browser');
+    } else showToast('HLS not supported in this browser');
+  }
+// ===== QUALITY BADGE & SWITCHER (Option C) =====
+(function addQualitySwitcher(){
+  // use existing QUALITY_SOURCES and hls/attachSource
+  const videoPanEl = document.getElementById('videoPan');
+  if (!videoPanEl) return;
+
+  // create badge
+  const badge = document.createElement('div');
+  badge.className = 'quality-badge';
+  badge.innerHTML = `<span id="qualityLabel">AUTO</span>
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+  // menu container
+  const menu = document.createElement('div');
+  menu.className = 'quality-menu';
+  badge.appendChild(menu);
+
+  // attach
+  videoPanEl.appendChild(badge);
+
+  let currentQuality = 'auto';
+  const qualityLabel = badge.querySelector('#qualityLabel');
+
+  // helper to build menu from QUALITY_SOURCES
+  function populateQualityMenu(){
+    menu.innerHTML = '';
+    // preferred order
+    const order = ['auto', '1080p', '720p', '480p'];
+    order.forEach(key => {
+      const url = (QUALITY_SOURCES && QUALITY_SOURCES[key]) || '';
+      // For 'auto' we allow it even if no explicit url (it can mean HLS autodetect)
+      if (key !== 'auto' && !url) return;
+      const btn = document.createElement('button');
+      btn.textContent = (key === 'auto') ? 'Auto' : key;
+      btn.dataset.qualityKey = key;
+      if (key === currentQuality) btn.classList.add('active');
+      btn.addEventListener('click', async () => {
+        changeQuality(key);
+        menu.style.display = 'none';
+      });
+      menu.appendChild(btn);
+    });
+    // if nothing configured, show disabled placeholder
+    if (!menu.children.length) {
+      const d = document.createElement('div'); d.style.color='var(--muted)'; d.style.padding='8px'; d.textContent = 'No qualities';
+      menu.appendChild(d);
     }
   }
 
-  async function startFromPoster(){
-    if (!FIXED_M3U8) { showToast('Movie not found'); return; }
-    try {
-      attachSource(FIXED_M3U8);
-      poster.style.display = 'none';
-      await new Promise(r => setTimeout(r,50));
-      const p = video.play();
-      if (p && p.catch) p.catch(()=>{});
-    } catch(e){ console.error(e); showToast('Could not start stream'); }
+  // toggle menu
+  badge.addEventListener('click', (e) => {
+    e.stopPropagation();
+    // if embed mode visible, do nothing
+    if (typeof embedFrame !== 'undefined' && embedFrame.style.display === 'block') return;
+    menu.style.display = (menu.style.display === 'flex' || menu.style.display === 'block') ? 'none' : 'flex';
+  });
+
+  // hide menu on outside click
+  document.addEventListener('click', ()=> { menu.style.display = 'none'; });
+
+  // change quality implementation
+  async function changeQuality(key){
+    if (!key) return;
+    // if HLS is present and supports levels, and key==='auto', set Hls auto level
+    if (key === 'auto') {
+      currentQuality = 'auto';
+      qualityLabel.textContent = 'AUTO';
+      // if hls exists and has levels -> auto
+      if (hls && Array.isArray(hls.levels) && hls.levels.length) {
+        try { hls.currentLevel = -1; showToast('Quality: Auto'); } catch(e){ console.warn(e); }
+        updateMenuActive();
+        return;
+      }
+      // otherwise if an auto url exists, load that
+      const autoUrl = QUALITY_SOURCES.auto || QUALITY_SOURCES['720p'] || QUALITY_SOURCES['480p'] || QUALITY_SOURCES['1080p'] || '';
+      if (autoUrl) { await loadUrl(autoUrl); showToast('Quality: Auto'); updateMenuActive(); return; }
+      showToast('Auto quality not available');
+      updateMenuActive();
+      return;
+    }
+
+    // for explicit quality keys (1080p/720p/480p)
+    const url = QUALITY_SOURCES[key];
+    if (!url) { showToast(key + ' not available'); return; }
+    await loadUrl(url);
+    currentQuality = key;
+    qualityLabel.textContent = key;
+    showToast('Quality: ' + key);
+    updateMenuActive();
   }
 
+  // load url helper: remembers time and play-state, attaches source, seeks and resumes
+  async function loadUrl(url){
+    try {
+      const wasPaused = video.paused;
+      const currentTime = video.currentTime || 0;
+      // detach HLS if exists then attach new
+      // attachSource() will hide embed and destroy prior hls if present in your code
+      attachSource(url);
+
+      // wait until canplay or small timeout
+      await new Promise((resolve) => {
+        const t = setTimeout(()=> resolve(), 1200); // fallback
+        function onCan(){ clearTimeout(t); resolve(); video.removeEventListener('canplay', onCan); }
+        video.addEventListener('canplay', onCan);
+      });
+
+      // try to seek to previous time if valid
+      try { if (!isNaN(video.duration) && isFinite(video.duration) && currentTime <= (video.duration || Infinity)) video.currentTime = currentTime; } catch(e){}
+      if (!wasPaused) { try { const p = video.play(); if (p && p.catch) p.catch(()=>{}); } catch(e){} }
+    } catch(err){ console.warn('loadUrl error', err); showToast('Could not switch quality'); }
+  }
+
+  function updateMenuActive(){
+    Array.from(menu.children).forEach(btn => {
+      if (!btn.dataset || !btn.dataset.qualityKey) return;
+      btn.classList.toggle('active', btn.dataset.qualityKey === currentQuality);
+    });
+  }
+
+  // ensure menu populates on load and when HLS manifest parsed
+  populateQualityMenu();
+  if (typeof hls !== 'undefined' && hls && hls.on) {
+    hls.on && hls.on(Hls.Events.MANIFEST_PARSED, ()=> {
+      // if hls levels exist and user had not selected explicit quality yet, show AUTO
+      if ((!currentQuality || currentQuality === 'auto') && hls.levels && hls.levels.length) {
+        currentQuality = 'auto';
+        qualityLabel.textContent = 'AUTO';
+      }
+      populateQualityMenu();
+    });
+  }
+
+  // hide badge when embed iframe active
+  const observer = new MutationObserver(()=> {
+    try {
+      if (embedFrame && embedFrame.style.display === 'block') {
+        badge.style.display = 'none';
+      } else {
+        badge.style.display = 'flex';
+      }
+    } catch(e){}
+  });
+  // observe attribute changes on embedFrame
+  if (embedFrame) observer.observe(embedFrame, { attributes: true, attributeFilter: ['style'] });
+
+  // expose changeQuality for debug
+  window._changeQuality = changeQuality;
+
+})();
+
+  // ===== embed + overlay =====
+  function showEmbed(url){
+    if (!url) return showToast('Embed URL missing');
+    try { video.pause(); } catch(e){}
+    poster.style.display = 'none';
+    embedFrame.src = url;
+    embedFrame.style.display = 'block';
+    // show overlay to block iframe top-right icon
+    if (iframeOverlay) iframeOverlay.style.display = 'block';
+  }
+  function hideEmbed(){
+    embedFrame.src = 'about:blank';
+    embedFrame.style.display = 'none';
+    if (iframeOverlay) iframeOverlay.style.display = 'none';
+  }
+
+  // ===== servers (Player + embed servers only) =====
+  function populateServerButtons(){
+    serverList.innerHTML = '';
+    const playerBtn = document.createElement('button');
+    playerBtn.textContent = 'TG-Stream';
+    playerBtn.className = 'active';
+    playerBtn.addEventListener('click', ()=> {
+      hideEmbed();
+      if (FIXED_M3U8) attachSource(FIXED_M3U8);
+      Array.from(serverList.children).forEach(b=> b.classList.remove('active'));
+      playerBtn.classList.add('active');
+      showToast('Using built-in player');
+    });
+    serverList.appendChild(playerBtn);
+
+    Object.keys(EMBED_SERVERS || {}).forEach(key => {
+      const url = EMBED_SERVERS[key];
+      const b = document.createElement('button');
+      b.textContent = key;
+      b.addEventListener('click', () => {
+        Array.from(serverList.children).forEach(btn=> btn.classList.remove('active'));
+        b.classList.add('active');
+        showEmbed(url);
+      });
+      serverList.appendChild(b);
+    });
+  }
+  populateServerButtons();
+
+  // ===== poster -> start player =====
+  async function startFromPoster(){
+    if (!FIXED_M3U8 && Object.keys(EMBED_SERVERS || {}).length === 0) { showToast('Movie not found'); return; }
+    if (FIXED_M3U8) attachSource(FIXED_M3U8);
+    poster.style.display = 'none';
+    await new Promise(r => setTimeout(r,50));
+    try { const p = video.play(); if (p && p.catch) p.catch(()=>{}); } catch(e){ showToast('Could not start'); }
+  }
   poster.addEventListener('click', startFromPoster);
   posterPlay.addEventListener('click', startFromPoster);
 
-  // Play/pause
+  // ===== play/pause, mute =====
   function togglePlay(){
+    if (embedFrame.style.display === 'block') { showToast('Play control works for built-in player only'); return; }
     if (video.paused) video.play(); else video.pause();
   }
   playBtn.addEventListener('click', togglePlay);
-  videoPan.addEventListener('click', togglePlay);
-
   video.addEventListener('play', ()=> playBtn.textContent = '⏸');
   video.addEventListener('pause', ()=> playBtn.textContent = '▶');
 
-  // Double tap 10s like YouTube
-  let lastTap = 0;
-  video.addEventListener('click', e=>{
-    const now = Date.now();
-    if (now - lastTap < 300){
-      const x = e.offsetX;
-      video.currentTime += x > video.clientWidth/2 ? 10 : -10;
-    }
-    lastTap = now;
-  });
+  muteBtn.addEventListener('click', ()=> { video.muted = !video.muted; muteBtn.textContent = video.muted ? '🔈' : '🔊'; });
+  // --- RELIABLE SINGLE-CLICK (play/pause) + DOUBLE-CLICK (10s skip) ---
+// Put this after togglePlay() and after you define `video`, `iframeOverlay`, `embedFrame`, `showToast()`.
 
-  // Keyboard left/right seek
-  document.addEventListener('keydown', e=>{
+(function enableClickAndDoubleTapSkip(){
+  if (!video) return;
+
+  let lastClickTime = 0;
+  let clickTimer = null;
+  const DOUBLE_MS = 300; // max ms between clicks to consider as double
+  const SKIP_SECONDS = 10;
+
+  // helper to get X position relative to video content area
+  function getClickX(evt){
+    const rect = video.getBoundingClientRect();
+    // prefer clientX, but handle touch events
+    const clientX = (evt.clientX !== undefined) ? evt.clientX : (evt.touches && evt.touches[0] && evt.touches[0].clientX) || 0;
+    return { x: clientX - rect.left, width: rect.width };
+  }
+
+  // Remove any previous click listener you had on video to avoid duplicates
+  try { video.removeEventListener('click', video._clickHandler); } catch(e){}
+
+  // attach new handler and keep reference for potential future removal
+  video._clickHandler = function (e) {
+    // if embed iframe overlay is active or iframe shown, ignore toggles/skips
+    if ((typeof embedFrame !== 'undefined' && embedFrame.style.display === 'block') || (iframeOverlay && iframeOverlay.style.display === 'block')) {
+      return;
+    }
+
+    const now = Date.now();
+    const isDouble = (now - lastClickTime) < DOUBLE_MS;
+    lastClickTime = now;
+
+    const pos = getClickX(e);
+    const isRight = pos.x > (pos.width / 2);
+
+    if (isDouble) {
+      // double click detected -> cancel pending single-click action
+      if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
+      // perform skip
+      try {
+        if (!isNaN(video.duration) && isFinite(video.duration)) {
+          if (isRight) {
+            video.currentTime = Math.min(video.duration, video.currentTime + SKIP_SECONDS);
+            showToast('Forward +10s');
+          } else {
+            video.currentTime = Math.max(0, video.currentTime - SKIP_SECONDS);
+            showToast('Backward -10s');
+          }
+        } else {
+          showToast('Cannot skip — duration unknown');
+        }
+      } catch(err){
+        console.warn('Skip failed', err);
+      }
+      // prevent default to avoid double bubbling
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+
+    // not double yet — start timer to treat as single click if no second click arrives
+    if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
+    clickTimer = setTimeout(() => {
+      clickTimer = null;
+      // single click: toggle play/pause
+      togglePlay();
+    }, DOUBLE_MS + 10); // a tiny margin
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  // attach handler
+  video.addEventListener('click', video._clickHandler);
+
+  // For touch devices: also handle touchend to reduce perceived latency (optional)
+  video.addEventListener('touchend', function touchHandler(e){
+    // reuse the same click handler logic (touch usually also fires click, but this helps on some devices)
+    video._clickHandler(e);
+  }, { passive: true });
+
+})();
+
+
+  // ===== progress/time =====
+  video.addEventListener('timeupdate', ()=> { const d = video.duration || 0; const pct = d ? (video.currentTime/d)*100 : 0; played.style.width = pct + '%'; updateTime(); });
+  video.addEventListener('progress', ()=> { try { const b = video.buffered; if (b && b.length) { const end = b.end(b.length-1); const pct = video.duration ? (end/video.duration)*100 : 0; buffer.style.width = pct + '%'; } } catch(e){} });
+  function updateTime(){ const cur = isFinite(video.currentTime) ? video.currentTime : 0; const dur = isFinite(video.duration) ? video.duration : 0; timeText.textContent = formatTime(cur) + ' / ' + (dur ? formatTime(dur) : '00:00'); }
+  function formatTime(s){ if (!isFinite(s)) return '00:00'; const h=Math.floor(s/3600), m=Math.floor((s%3600)/60), sec=Math.floor(s%60); return (h>0?String(h).padStart(2,'0')+':':'') + String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0'); }
+  progress.addEventListener('click', (e)=> { if (embedFrame.style.display === 'block') return; const rect = progress.getBoundingClientRect(); const x = e.clientX - rect.left; const pct = Math.max(0, Math.min(1, x / rect.width)); if (video.duration) video.currentTime = pct * video.duration; });
+
+  // ===== settings menu toggle & submenus =====
+  settingsBtn.addEventListener('click', (e)=> { settingsMenu.style.display = (settingsMenu.style.display === 'block') ? 'none' : 'block'; settingsMenu.setAttribute('aria-hidden', settingsMenu.style.display !== 'block'); e.stopPropagation(); });
+  settingsMenu.addEventListener('click', e=> e.stopPropagation());
+  document.addEventListener('click', ()=> { settingsMenu.style.display = 'none'; settingsMenu.setAttribute('aria-hidden','true'); });
+  document.querySelectorAll('.menu-header').forEach(header=> { header.addEventListener('click', ()=> { const targetId = header.getAttribute('data-target'); document.querySelectorAll('.submenu').forEach(s=> s.style.display = 'none'); const el = document.getElementById(targetId); el.style.display = (el.style.display === 'block') ? 'none' : 'block'; }); });
+
+  // ===== playback speed =====
+  submenuPlayback.querySelectorAll('button[data-speed]').forEach(btn=>{ btn.addEventListener('click', ()=> { const sp = parseFloat(btn.getAttribute('data-speed')); video.playbackRate = sp; showToast('Speed: ' + sp + '×'); settingsMenu.style.display = 'none'; }); });
+
+  // ===== audio boost (WebAudio) =====
+  let audioCtx=null, sourceNode=null, gainNode=null;
+  function ensureAudioNodes(recreate=false){ try{ if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if (sourceNode && recreate) { try{ sourceNode.disconnect(); } catch{} sourceNode=null; } if (!sourceNode) sourceNode = audioCtx.createMediaElementSource(video); if (!gainNode) gainNode = audioCtx.createGain(); try{ sourceNode.disconnect(); } catch{} sourceNode.connect(gainNode); gainNode.connect(audioCtx.destination); } catch(e){ audioCtx=null; sourceNode=null; gainNode=null; } }
+  if (audioBoostRange){
+    audioBoostRange.addEventListener('input', ()=> { const v = Number(audioBoostRange.value); if (audioBoostValue) audioBoostValue.textContent = Math.round(v) + '%'; ensureAudioNodes(false); if (gainNode) gainNode.gain.value = v/100; else video.volume = Math.max(0, Math.min(1, v/100)); });
+    document.addEventListener('click', function unlock(){ if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{}); document.removeEventListener('click', unlock); });
+  }
+
+  // ===== zoom/pan =====
+  let zoomVal=1, panX=0, panY=0;
+  function applyZoom(){ video.style.transform = `scale(${zoomVal}) translate(${panX}px,${panY}px)`; }
+  document.querySelectorAll('#submenuZoom button[data-zoom]').forEach(b=>{ b.addEventListener('click', ()=> { const z = b.getAttribute('data-zoom'); if (z === 'fit'){ zoomVal = 1; panX = 0; panY = 0; video.style.objectFit = 'contain'; } else { zoomVal = Number(z); video.style.objectFit = 'none'; } applyZoom(); settingsMenu.style.display = 'none'; }); });
+
+  const zoomPresets = ['fit','1.0','1.25','1.5','2.0']; let zoomIndex=0;
+  const zoomBtn = document.getElementById('zoomBtn');
+  zoomBtn.addEventListener('click', ()=> { zoomIndex = (zoomIndex + 1) % zoomPresets.length; const z = zoomPresets[zoomIndex]; if (z === 'fit'){ zoomVal = 1; panX = 0; panY = 0; video.style.objectFit = 'contain'; } else zoomVal = Number(z); applyZoom(); });
+
+  let dragging=false,lastX=0,lastY=0;
+  const videoPan = document.getElementById('videoPan');
+  videoPan.addEventListener('pointerdown', e=> { if (zoomVal <= 1) return; dragging=true; lastX=e.clientX; lastY=e.clientY; try{ videoPan.setPointerCapture(e.pointerId); }catch{} });
+  videoPan.addEventListener('pointermove', e=> { if (!dragging) return; panX += (e.clientX - lastX)/zoomVal; panY += (e.clientY - lastY)/zoomVal; lastX=e.clientX; lastY=e.clientY; applyZoom(); });
+  ['pointerup','pointercancel','pointerout','pointerleave'].forEach(ev=> videoPan.addEventListener(ev, ()=> { dragging=false; try{ videoPan.releasePointerCapture && videoPan.releasePointerCapture(); }catch{} }));
+
+  // double-tap skip
+  let lastTap=0;
+  video.addEventListener('click', e=>{ const now = Date.now(); if (now - lastTap < 300){ const rect = video.getBoundingClientRect(); const x = e.clientX - rect.left; video.currentTime += x > rect.width/2 ? 10 : -10; } lastTap = now; });
+
+  // keyboard handlers (space, arrows) + block Shift+M
+  document.addEventListener('keydown', function(e){
+    const tag = document.activeElement.tagName.toLowerCase();
+    if (tag === 'input' || tag === 'textarea') return;
+    // block Shift+M globally (requested)
+    if (e.shiftKey && (e.key === 'M' || e.key === 'm')) { e.preventDefault(); e.stopPropagation(); showToast('Shortcut disabled',900); return; }
+    if (e.code === 'Space') { e.preventDefault(); if (embedFrame.style.display === 'block') { showToast('Play/pause works for built-in player only'); return; } if (video.paused) video.play(); else video.pause(); }
     if (e.key === 'ArrowRight') video.currentTime += 10;
     if (e.key === 'ArrowLeft') video.currentTime -= 10;
   });
 
-  // Mute
-  muteBtn.addEventListener('click', ()=> {
-    video.muted = !video.muted;
-    muteBtn.textContent = video.muted ? '🔈' : '🔊';
-  });
-
-  // Time & progress
-  video.addEventListener('timeupdate', ()=> {
-    const d = video.duration || 0;
-    const pct = d ? (video.currentTime/d)*100 : 0;
-    played.style.width = pct + '%';
-    updateTime();
-  });
-  video.addEventListener('progress', ()=> {
+  // ===== Picture in Picture =====
+  const pipBtn = document.getElementById('pipBtn');
+  if (!('pictureInPictureEnabled' in document) || video.disablePictureInPicture) pipBtn.style.display = 'none';
+  pipBtn.addEventListener('click', async ()=> {
     try {
-      const b = video.buffered;
-      if (b && b.length) {
-        const end = b.end(b.length-1);
-        const pct = video.duration ? (end/video.duration)*100 : 0;
-        buffer.style.width = pct + '%';
-      }
-    } catch(e){}
+      if (document.fullscreenElement && document.exitFullscreen) await document.exitFullscreen();
+      if (document.pictureInPictureElement) await document.exitPictureInPicture(); else await video.requestPictureInPicture();
+    } catch(err){ console.error(err); showToast('Picture-in-Picture not available'); }
   });
+  video.addEventListener('enterpictureinpicture', ()=> { pipBtn.textContent = '◼'; pipBtn.title = 'Exit Picture in Picture'; });
+  video.addEventListener('leavepictureinpicture', ()=> { pipBtn.textContent = '▣'; pipBtn.title = 'Picture in Picture'; });
 
-  function updateTime(){
-    const cur = isFinite(video.currentTime) ? video.currentTime : 0;
-    const dur = isFinite(video.duration) ? video.duration : 0;
-    timeText.textContent = formatTime(cur) + ' / ' + (dur?formatTime(dur):'00:00');
-  }
-  function formatTime(s){
-    if (!isFinite(s)) return '00:00';
-    const h = Math.floor(s/3600), m = Math.floor((s%3600)/60), sec = Math.floor(s%60);
-    return (h>0?String(h).padStart(2,'0')+':':'') + String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0');
-  }
-
-  progress.addEventListener('click', (e)=> {
-    const rect = progress.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const pct = Math.max(0, Math.min(1, x / rect.width));
-    if (video.duration) video.currentTime = pct * video.duration;
-  });
-
-  // Settings menu toggle
-  settingsBtn.addEventListener('click', (e)=> {
-    settingsMenu.style.display = (settingsMenu.style.display === 'block') ? 'none' : 'block';
-    settingsMenu.setAttribute('aria-hidden', settingsMenu.style.display !== 'block');
-    e.stopPropagation();
-  });
-  settingsMenu.addEventListener('click', e=> e.stopPropagation());
-  document.addEventListener('click', ()=> { settingsMenu.style.display = 'none'; settingsMenu.setAttribute('aria-hidden','true'); });
-
-  document.querySelectorAll('.menu-header').forEach(header=>{
-    header.addEventListener('click', ()=> {
-      const targetId = header.getAttribute('data-target');
-      document.querySelectorAll('.submenu').forEach(s=> s.style.display = 'none');
-      const el = document.getElementById(targetId);
-      el.style.display = (el.style.display === 'block') ? 'none' : 'block';
-    });
-  });
-
-  // Playback speed
-  submenuPlayback.querySelectorAll('button[data-speed]').forEach(btn=>{
-    btn.addEventListener('click', ()=> {
-      const sp = parseFloat(btn.getAttribute('data-speed'));
-      video.playbackRate = sp;
-      showToast('Speed: ' + sp + '×');
-      settingsMenu.style.display = 'none';
-    });
-  });
-
-  // Audio boost
-  let audioCtx=null, sourceNode=null, gainNode=null;
-  function ensureAudioNodes(recreate=false){
-    try{
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (sourceNode && recreate) { try{sourceNode.disconnect();}catch{} sourceNode=null; }
-      if (!sourceNode) sourceNode = audioCtx.createMediaElementSource(video);
-      if (!gainNode) gainNode = audioCtx.createGain();
-      try{ sourceNode.disconnect(); }catch{}
-      sourceNode.connect(gainNode);
-      gainNode.connect(audioCtx.destination);
-    } catch(e){ audioCtx=null; sourceNode=null; gainNode=null; }
-  }
-  audioBoostRange.addEventListener('input', ()=> {
-    const v = Number(audioBoostRange.value);
-    audioBoostValue.textContent = Math.round(v) + '%';
-    ensureAudioNodes(false);
-    if (gainNode) gainNode.gain.value = v/100;
-    else video.volume = Math.max(0, Math.min(1, v/100));
-  });
-  document.addEventListener('click', function unlock(){ if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{}); document.removeEventListener('click', unlock); });
-
-   // Quality menu – manual (Auto, 1080p, 720p, 480p)
-  function populateQualityMenu(){
-    qualityButtons.innerHTML = '';
-
-    const order = ['auto', '1080p', '720p', '480p'];
-    let available = 0;
-
-    order.forEach(label => {
-      const url = QUALITY_SOURCES[label];
-      if (!url) return;
-
-      available++;
-      const b = document.createElement('button');
-      b.className = 'small-btn';
-      b.textContent = (label === 'auto') ? 'Auto' : label;
-      b.dataset.qualityKey = label;
-
-      b.addEventListener('click', () => {
-        changeQuality(label);
-      });
-
-      qualityButtons.appendChild(b);
-    });
-
-    if (!available){
-      const d = document.createElement('div');
-      d.style.color = 'var(--muted)';
-      d.textContent = 'No qualities configured';
-      qualityButtons.appendChild(d);
-    }
-  }
-  let currentQuality = 'auto';
-
-  function changeQuality(key){
-    const url = QUALITY_SOURCES[key];
-    if (!url) {
-      showToast('Link missing for ' + key);
-      return;
-    }
-
-    const wasPaused = video.paused;
-    const curTime = video.currentTime || 0;
-
-    // ✅ naya source attach karo
-    attachSource(url);
-
-    // Wait till naya stream load ho jaye, phir seek + resume
-    const onCanPlay = () => {
-      try {
-        if (video.duration && curTime <= video.duration) {
-          video.currentTime = curTime;
-        }
-      } catch(e){}
-
-      if (!wasPaused) {
-        const p = video.play();
-        if (p && p.catch) p.catch(()=>{});
-      }
-      video.removeEventListener('canplay', onCanPlay);
-    };
-
-    video.addEventListener('canplay', onCanPlay);
-
-    currentQuality = key;
-    showToast('Quality: ' + (key === 'auto' ? 'Auto' : key));
-    settingsMenu.style.display = 'none';
-  }
-
-
-  // Zoom controls & quick zoom
-  let zoomVal = 1, panX = 0, panY = 0;
-  function applyZoom(){ video.style.transform = `scale(${zoomVal}) translate(${panX}px,${panY}px)`; }
-  submenuZoom.querySelectorAll('button[data-zoom]').forEach(b=>{
-    b.addEventListener('click', ()=> {
-      const z = b.getAttribute('data-zoom');
-      if (z === 'fit'){ zoomVal = 1; panX = 0; panY = 0; video.style.objectFit = 'contain'; }
-      else { zoomVal = Number(z); video.style.objectFit = 'none'; }
-      applyZoom(); settingsMenu.style.display = 'none';
-    });
-  });
-  const zoomPresets = ['fit','1.0','1.25','1.5','2.0']; let zoomIndex = 0;
-  zoomBtn.addEventListener('click', ()=> {
-    zoomIndex = (zoomIndex + 1) % zoomPresets.length;
-    const z = zoomPresets[zoomIndex];
-    if (z === 'fit'){ zoomVal = 1; panX = 0; panY = 0; video.style.objectFit = 'contain'; } else zoomVal = Number(z);
-    applyZoom();
-  });
-
-  // pan when zoomed
-  let dragging = false, lastX = 0, lastY = 0;
-  videoPan.addEventListener('pointerdown', e=> { if (zoomVal <= 1) return; dragging = true; lastX = e.clientX; lastY = e.clientY; videoPan.setPointerCapture(e.pointerId); });
-  videoPan.addEventListener('pointermove', e=> { if (!dragging) return; panX += (e.clientX - lastX) / zoomVal; panY += (e.clientY - lastY) / zoomVal; lastX = e.clientX; lastY = e.clientY; applyZoom(); });
-  videoPan.addEventListener('pointerup', e=> { dragging = false; try{ videoPan.releasePointerCapture(e.pointerId); }catch{} });
-  videoPan.addEventListener('pointercancel', ()=> { dragging = false; });
-
-    // ✅ Fullscreen FIX: Android + iPhone Safe
+  // ===== Fullscreen (Android + iOS safe) =====
+  const fsBtn = document.getElementById('fsBtn');
   fsBtn.addEventListener('click', async ()=> {
     try {
       const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-      // ✅ iOS Safari only allows <video> fullscreen
-      if (isIOS && typeof video.webkitEnterFullscreen === 'function') {
-        if (video.webkitDisplayingFullscreen) {
-          video.webkitExitFullscreen();
-        } else {
-          video.webkitEnterFullscreen();
-        }
-        return;
-      }
-
-      // ✅ Android + PC Fullscreen
-      if (!document.fullscreenElement) {
-        if (playerEl.requestFullscreen) {
-          await playerEl.requestFullscreen();
-        } else if (playerEl.webkitRequestFullscreen) {
-          await playerEl.webkitRequestFullscreen();
-        }
-      } else {
-        if (document.exitFullscreen) {
-          await document.exitFullscreen();
-        } else if (document.webkitExitFullscreen) {
-          await document.webkitExitFullscreen();
-        }
-      }
-
-    } catch(e){
-      console.warn("Fullscreen error:", e);
-      showToast("Fullscreen not supported");
-    }
+      if (isIOS && typeof video.webkitEnterFullscreen === 'function') { if (video.webkitDisplayingFullscreen) video.webkitExitFullscreen(); else video.webkitEnterFullscreen(); return; }
+      if (!document.fullscreenElement) { if (playerEl.requestFullscreen) await playerEl.requestFullscreen(); else if (playerEl.webkitRequestFullscreen) await playerEl.webkitRequestFullscreen(); } else { if (document.exitFullscreen) await document.exitFullscreen(); else if (document.webkitExitFullscreen) await document.webkitExitFullscreen(); }
+    } catch(e){ console.warn('Fullscreen error:', e); showToast('Fullscreen not supported'); }
   });
 
-
-  // Picture-in-Picture
-  if (!('pictureInPictureEnabled' in document) || video.disablePictureInPicture) {
-    pipBtn.style.display = 'none';
+  // overlay click interception (prevent clicks reaching iframe)
+  if (iframeOverlay) {
+    iframeOverlay.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); showToast('This action is disabled',1200); });
+    iframeOverlay.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar'){ e.preventDefault(); e.stopPropagation(); showToast('This action is disabled',800); } });
   }
-  pipBtn.addEventListener('click', async ()=> {
-    try {
-      if (document.fullscreenElement && document.exitFullscreen) {
-        await document.exitFullscreen();
-      }
-      if (document.pictureInPictureElement) {
-        await document.exitPictureInPicture();
-      } else {
-        await video.requestPictureInPicture();
-      }
-    } catch(err) {
-      console.error(err);
-      showToast('Unable to start Picture in Picture');
-    }
-  });
-  video.addEventListener('enterpictureinpicture', ()=> {
-    pipBtn.textContent = '◼';
-    pipBtn.title = 'Exit Picture in Picture';
-  });
-  video.addEventListener('leavepictureinpicture', ()=> {
-    pipBtn.textContent = '▣';
-    pipBtn.title = 'Picture in Picture';
-  });
 
-  // toast helper
+  // ===== toast helper =====
   let toastTimer = null;
-  function showToast(msg, ms = 2000){
-    toast.textContent = msg; toast.style.display = 'block';
-    if (toastTimer) clearTimeout(toastTimer);
-    toastTimer = setTimeout(()=> { toast.style.display = 'none'; toastTimer = null; }, ms);
-  }
+  const toast = document.getElementById('toast');
+  function showToast(msg, ms = 1800){ toast.textContent = msg; toast.style.display = 'block'; if (toastTimer) clearTimeout(toastTimer); toastTimer = setTimeout(()=>{ toast.style.display = 'none'; toastTimer = null; }, ms); }
 
-  // expose for debug
-  window.attachSource = attachSource;
-  window._hls = ()=> hls;
-// ✅ Space key = Play / Pause
-document.addEventListener("keydown", function (e) {
-  // Input / range / text field me space ka effect disable rahe
-  const tag = document.activeElement.tagName.toLowerCase();
-  if (tag === "input" || tag === "textarea") return;
-
-  if (e.code === "Space") {
-    e.preventDefault(); // Page scroll rukega
-    if (video.paused) {
-      video.play();
-    } else {
-      video.pause();
+  // ===== Auto embed via query param (still supported) =====
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const embedUrl = params.get('embed');
+    const embedLabel = params.get('embed_label') || 'Embed';
+    if (embedUrl) {
+      EMBED_SERVERS[embedLabel] = embedUrl;
+      const b = document.createElement('button'); b.textContent = embedLabel;
+      b.addEventListener('click', ()=> { Array.from(serverList.children).forEach(btn=>btn.classList.remove('active')); b.classList.add('active'); showEmbed(embedUrl); });
+      serverList.appendChild(b);
+      Array.from(serverList.children).forEach(btn=>btn.classList.remove('active'));
+      b.classList.add('active');
+      showEmbed(embedUrl);
     }
-  }
-});
+  } catch(e){ /* ignore */ }
 
+  // Expose attachSource for debug
+  window.attachSource = attachSource;
 })();
+</script>
+<script>document.getElementById("brandBadge").addEventListener("click",()=>{
+   window.location.href = "http://tgmovies.my.to/";
+});
 </script>
 </body>
 </html>
