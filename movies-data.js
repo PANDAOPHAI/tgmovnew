@@ -1,6 +1,5 @@
 const MOVIES = [
 
-  // ✅ POPULAR MOVIE
   {
     id: "it",
     title: "IT (2017)",
@@ -11,11 +10,21 @@ const MOVIES = [
     poster: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdbXLtpf0dZyDCeZOKmbygEaiAKEcXManfow&s",
     banner: "https://wallpapercave.com/dwp2x/wp12837782.jpg",
 
-    stream: "https://p.10014.workers.dev/hailmist36.pro/file2/+VkvnkKo4nC+pxYjlWodg4j3M2Shy+LONcK07Y~PjmcA6dKUlqxy4o8JdkLt3vcLH9Py3RWpBKKQbskiznW5BNs~q499dYIY4arpo9+l6RfUMLplFkSUF+Z5omJGaT60o7xSgC8NdRAoWF2PtZzOwbszoSBv7yng4J+u8r+UZn0=/MTA4MA==/aW5kZXgubTN1OA==.m3u8",
+    // MAIN stream
+    stream_auto: "https://p.10014.workers.dev/hailmist36.pro/file2/+VkvnkKo4nC+pxYjlWodg4j3M2Shy+LONcK07Y~PjmcA6dKUlqxy4o8JdkLt3vcLH9Py3RWpBKKQbskiznW5BNs~q499dYIY4arpo9+l6RfUMLplFkSUF+Z5omJGaT60o7xSgC8NdRAoWF2PtZzOwbszoSBv7yng4J+u8r+UZn0=/MTA4MA==/aW5kZXgubTN1OA==.m3u8",
+
+    stream_720: "https://p.10014.workers.dev/hailmist36.pro/file2/+VkvnkKo4nC+pxYjlWodg4j3M2Shy+LONcK07Y~PjmcA6dKUlqxy4o8JdkLt3vcLH9Py3RWpBKKQbskiznW5BNs~q499dYIY4arpo9+l6RfUMLplFkSUF+Z5omJGaT60o7xSgC8NdRAoWF2PtZzOwbszoSBv7yng4J+u8r+UZn0=/MTA4MA==/aW5kZXgubTN1OA==.m3u8",
+
+    embed_servers: {
+      "RiveStream": "https://rivestream.org/embed?type=movie&id=346364",
+      
+    },
 
     rating: 8.8,
     category: "popular"
   },
+
+  
   {
     id: "endgame",
     title: "End Game (2019)",
@@ -35,7 +44,11 @@ const MOVIES = [
 	stream_720: "https://p.10014.workers.dev/stormgleam42.xyz/file2/gbFtj~KVbTvgRnKRId8jUML8EmU+aIV+LVwYVyr9yisO4HvK+x65DVUjDxZGkRgOz5Di4l6K9A4bU0OPIuBmJnQuHYBvXCg~ggZRWCPp5ETissaQ4mF9GgXNi1Q1n91iCdOXAMx~B3M6WNRXl5k6My3tIRnS6Pq3x4OPHV61ag0=/NzIw/aW5kZXgubTN1OA==.m3u8",
 	
 	stream_480: "https://p.10014.workers.dev/stormgleam42.xyz/file2/gbFtj~KVbTvgRnKRId8jUML8EmU+aIV+LVwYVyr9yisO4HvK+x65DVUjDxZGkRgOz5Di4l6K9A4bU0OPIuBmJnQuHYBvXCg~ggZRWCPp5ETissaQ4mF9GgXNi1Q1n91iCdOXAMx~B3M6WNRXl5k6My3tIRnS6Pq3x4OPHV61ag0=/MzYw/aW5kZXgubTN1OA==.m3u8",
-
+ embed_servers: {
+      "RiveStream": "https://rivestream.org/embed?type=movie&id=299534",
+	 "2Embed": "https://www.2embed.cc/embed/tt4154796"
+      
+    },
     rating: 8.4,
     category: "popular"
   },
@@ -54,7 +67,11 @@ const MOVIES = [
     stream_1080: "https://hemet.infamous.network/stream/variant/ZwZ4ZwRmAwWuZQH5ATR0Lmp0Zmp2BJDmA2Z3BGExBGExAGp3LmLlAQH1MQZkAQNlMzZlLmplLGtlZzH1Z2D2Ll4lp3WyAxcfEwN3o0SkqUqMnH5iKmM3Yy90oxWXoxkKHmEIFwujFxuwpxumn3qDFUOMHTgMZREmLxcuGKL2rRu5ZzAkGSIXIyEeGTyirHEgLaOkLHkeJUp/BQV3BQx3AwOyMGN1BQt5MwL2A2ZkA2R5MwL2LJMvMJMvAGVmZQN0BQSyAQAuLGHlZGtlBGZ2BTZ3LwqxMGDlLv5KrSAjHREyASHkF1AcH2kepxSgn2q3Yx9xFz1XM2E4nz9QFz5MGJHkrHu5qRR/LJLjZTR2MwAxLGuvAmt5Z2ZkMwN5MJVkLwZ5ZJLkZwxkZGuwAGH2MJEwAwtlLJH0ZGyxZmVmAGZlMzZkMQL1Lv5TMz9uqSRlFQIPoUykFRWxZmW6A1SOYaS3FQAaDmx4A1MiE0cWoTkxn3LlpxcLoGOsIGqzZ1WID0fgEaNjIUHlLGSXMUIWrKEEqaL5DGMuZxkVGxSlMx0.m3u8",
     stream_720: "https://hemet.infamous.network/stream/variant/ATZ3ZmN2LzD3BTZkZ2VmZwNmLzWyZmEvLmMzMGp3MTSwBJMxBGt2Amp0ZGp0MwxmZGWvZJH4BGt0AwAxBJZjAl5hrSqyoGp0pQuCFGL5GTgYn2EJHmWOYzEbK1uPZ0yJETyVLwuPAJuvA0EuD3WVL3EBGH5sqSM1DaESG0Hkp0SnqycXqzWCGGySGJ05Z2ExDaWIIKWRoaR/ZGIwAmyxZJV1ZwZkAQVlAwyzLzD0LJZlAQWuBJH4MzV3MJH5MzV4A2H0AwN0AQNjL2ExZQLmBTMyMTMvBQt1BP54DxIQrJgBA1pmn2p4HHf4HmunARIOYxM1oQEGMTq0JSSfLHVmAGMJAz9doKp/MJLmMGAzZGyxZmp2AQL5LwL0MTSwAGZ0BTIxMQtmMQx5ZJSzATZmZwLjZwAyZwqvAGV5A2L1LmAxMwZjMTR5Zv4gK3qdIUM1pSuJZGAbGJ1iZwyJER1OYz9lnaDmBT1QqRL4ZKEbpJWMqKARD1A5oSA0EUqMIaEeomL2DJcRGH9jn29iDJZ2H2Smqzu5qTqRGy9XESSWI18.m3u8",
     stream_480: "https://hemet.infamous.network/stream/variant/LGx2ZQt5MGEvZQyuZTZ4AmSxLJSwMQyuZGuuLmR4AQOyZTIuZTHkAQR2ZQNjAmuxAmOxLmt1ATL0ZTZmMwp0AP53qyq6FzuXGz44Ez1TZUcDpSuCMSWEYaE6ATy2qUD4oHuJH0xmJRWinzqcYGWMqKWUI0kTpILkn2I5Z0A4YIOKBSyirRSlK2IQEJqXF0ZlqmqjZyOKBQH/ZmEuMTZ1AGSyLJH3A2MuAGL4MGOyMwZ0MGMxAwL4ZGLkAzZmATH4LwDjBJRjAQH1L2AxMJLjZzDmZwL1AQp3MP5HMH9CM0tlpGMfnSWVBIOcDJMPH0EaYx5uH3MHL1IsrHHmozklnmLjJzZmp3p/MzMwBGZjMzAvZQxjAGSyZmt2A2ZmZJV3BJL2AGtkMTH1AwD1AQWvAJZkMGV1LGEzMTHlAGR3LmSwLGxmLmZ5Zv5WnUq2YGISnzMUrSchDxqFnHEhYI93YyIKGv14A2yRrTjkoGEJrUIgGQIzFTSOqISGI2xmJGOgJayKIJcOnmAlomy6n1tjMTAdEIx0qQyZA1uRL3MdrxD.m3u8",
-
+ embed_servers: {
+      "RiveStream": "https://rivestream.org/embed?type=movie&id=1218925",
+	 "2Embed": "https://www.2embed.cc/embed/tt30472557"
+      
+    },
     rating: 8.5,
     category: "Anime"
   },
@@ -74,7 +91,11 @@ const MOVIES = [
     stream_1080: "https://hemet.infamous.network/stream/variant/BGIwZJL0BQSyZ2IvBGt3MQyzZGN3BQt4MzRmLzD5ZGWyMQx5ZwH2ZzL0ATAwAmR1Lwx4MQx1AmL4AwR5ZQuvLl45GKV4L2MzHISjFGIhGRH1AGImMSM3YzfjYJgxHxg2F2gxAGuZov04qJplA2keo2yVFI9XqSWPZyWMrUL5nKL4q0SZp3AcGKyaM3t3GRIgoI92Mx9JGaL/LzAyAmVkBJHmZwAyLmp5AmN2ZJMvLmSwAwH1MGH5LmuxMJIzLJHmBTZ1ZmDmZQV4BGDkZmHmMGN4BGLmZGD2Lv5QBKMyJJMPoTAcD3I4naWzHxD1p2IEYx1jpKMnF1VlqwRmqHqYJSWcrGMBYHR/ZGAxAmDlZTWwZmp5AGN1Z2LkZzEwAmAyMwRmBGOuA2H4AwOxBTDlAmD3MGAwLwplZQt1LwWxAQIxLwqvAzH2Al50ZyIvLIEFZIceL1LmLwy0MUylqGWOYaZ3MIcQGJSSI1LmHGWPIF1BHT5ZE2IUK21dGyq6nUx1DJABpQAiEQLgIaZ5rwWeBHSZASuOHIqgZ2AnBRIdD3N.m3u8",
     stream_720: "https://hemet.infamous.network/stream/variant/BGIwZJL0BQSyZ2IvBGt3MQyzZGN3BQt4MzRmLzD5ZGWyMQx5ZwH2ZzL0ATAwAmR1Lwx4MQx1AmL4AwR5ZQuvLl45GKV4L2MzHISjFGIhGRH1AGImMSM3YzfjYJgxHxg2F2gxAGuZov04qJplA2keo2yVFI9XqSWPZyWMrUL5nKL4q0SZp3AcGKyaM3t3GRIgoI92Mx9JGaL/LzAyAmVkBJHmZwAyLmp5AmN2ZJMvLmSwAwH1MGH5LmuxMJIzLJHmBTZ1ZmDmZQV4BGDkZmHmMGN4BGLmZGD2Lv5QBKMyJJMPoTAcD3I4naWzHxD1p2IEYx1jpKMnF1VlqwRmqHqYJSWcrGMBYHR/ZGAxAmDlZTWwZmp5AGN1Z2LkZzEwAmAyMwRmBGOuA2H4AwOxBTDlAmD3MGAwLwplZQt1LwWxAQIxLwqvAzH2Al50ZyIvLIEFZIceL1LmLwy0MUylqGWOYaZ3MIcQGJSSI1LmHGWPIF1BHT5ZE2IUK21dGyq6nUx1DJABpQAiEQLgIaZ5rwWeBHSZASuOHIqgZ2AnBRIdD3N.m3u8",
     stream_480: "https://hemet.infamous.network/stream/variant/BGIwZJL0BQSyZ2IvBGt3MQyzZGN3BQt4MzRmLzD5ZGWyMQx5ZwH2ZzL0ATAwAmR1Lwx4MQx1AmL4AwR5ZQuvLl45GKV4L2MzHISjFGIhGRH1AGImMSM3YzfjYJgxHxg2F2gxAGuZov04qJplA2keo2yVFI9XqSWPZyWMrUL5nKL4q0SZp3AcGKyaM3t3GRIgoI92Mx9JGaL/LzAyAmVkBJHmZwAyLmp5AmN2ZJMvLmSwAwH1MGH5LmuxMJIzLJHmBTZ1ZmDmZQV4BGDkZmHmMGN4BGLmZGD2Lv5QBKMyJJMPoTAcD3I4naWzHxD1p2IEYx1jpKMnF1VlqwRmqHqYJSWcrGMBYHR/ZGAxAmDlZTWwZmp5AGN1Z2LkZzEwAmAyMwRmBGOuA2H4AwOxBTDlAmD3MGAwLwplZQt1LwWxAQIxLwqvAzH2Al50ZyIvLIEFZIceL1LmLwy0MUylqGWOYaZ3MIcQGJSSI1LmHGWPIF1BHT5ZE2IUK21dGyq6nUx1DJABpQAiEQLgIaZ5rwWeBHSZASuOHIqgZ2AnBRIdD3N.m3u8",
-
+embed_servers: {
+      "RiveStream": "https://rivestream.org/embed?type=movie&id=916224",
+	 "2Embed": "https://www.2embed.cc/embed/tt16428256"
+      
+    },
     rating: 8.5,
     category: "Anime"
   },
